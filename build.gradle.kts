@@ -38,6 +38,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 //    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
+    implementation("com.google.guava:guava")
+
 
     //   implementation("org.springframework.boot:spring-boot-starter-test")
 }
@@ -101,6 +103,7 @@ configurations.all {
         force("org.apache.commons:commons-compress:1.26.1")
         force("com.google.errorprone:error_prone_annotations:2.36.0")
         force("org.jetbrains:annotations:19.0.0")
+        force("org.checkerframework:checker-qual:3.48.3")
     }
 }
 

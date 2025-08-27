@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.exceptions.IncorrectUrlException;
 import ru.otus.exceptions.RouteNotFoundException;
@@ -42,6 +43,18 @@ public class RouteRestController {
     @PostMapping("/route")
     public Route saveRoute(@RequestBody Route route) {
         return dbServiceRoute.saveRoute(route);
+    }
+
+    @Operation(summary = "Filter routes by params")
+    @GetMapping("/route")
+    public List<Route> getFilteredRoutes(
+            @RequestParam(name = "min-length", required = false) Float minLength,
+            @RequestParam(name = "max-length", required = false) Float maxLength,
+            @RequestParam(name = "min-ascent", required = false) Float minAscent,
+            @RequestParam(name = "max-ascent", required = false) Float maxAscent,
+            @RequestParam(name = "min-descent", required = false) Float minDescent,
+            @RequestParam(name = "max-descent", required = false) Float maxDescent) {
+        return dbServiceRoute.getFilteredRoutes(minLength, maxLength, minAscent, maxAscent, minDescent, maxDescent);
     }
 
     @Operation(summary = "Create route by url")

@@ -16,14 +16,20 @@ public interface RouteRepository extends Repository<Route, Long> {
     Iterable<Route> findAllById(Iterable<Long> ids);
 
     @Query(
-            "select * from route r where r.length between :minLength and :maxLength and r.ascent between :minAscent and :maxAscent and r.descent between :minDescent and :maxDescent")
+            "select * from route r where "
+                    + "case when :minLength is null then true when r.length is null then false else r.length >= :minLength end AND "
+                    + "case when :maxLength is null then true when r.length is null then false else r.length <= :maxLength end AND "
+                    + "case when :minAscent is null then true when r.ascent is null then false else r.ascent >= :minAscent end AND "
+                    + "case when :maxAscent is null then true when r.ascent is null then false else r.ascent <= :maxAscent end AND "
+                    + "case when :minDescent is null then true when r.descent is null then false else r.descent >= :minDescent end AND "
+                    + "case when :maxDescent is null then true when r.descent is null then false else r.descent <= :maxDescent end")
     Iterable<Route> filter(
-            @Param("minLength") float minLength,
-            @Param("maxLength") float maxLength,
-            @Param("minAscent") float minAscent,
-            @Param("maxAscent") float maxAscent,
-            @Param("minDescent") float minDescent,
-            @Param("maxDescent") float maxDescent);
+            @Param("minLength") Float minLength,
+            @Param("maxLength") Float maxLength,
+            @Param("minAscent") Float minAscent,
+            @Param("maxAscent") Float maxAscent,
+            @Param("minDescent") Float minDescent,
+            @Param("maxDescent") Float maxDescent);
 
     @Query("select * from route r where r.ascent is null")
     Iterable<Route> filterWithNotProcessedElevations();
