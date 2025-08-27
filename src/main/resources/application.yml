@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5430/demoDB
+    username: usr
+    password: pwd
+  flyway:
+    enabled: true
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: "/swagger-ui"
+
+rest:
+  api:
+    prefix: /api
+    version: /v1
+
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: TRACE

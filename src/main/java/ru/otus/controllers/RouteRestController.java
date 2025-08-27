@@ -1,0 +1,78 @@
+package ru.otus.controllers;
+
+import io.swagger.v3.oas.annotations.Operation;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import org.springframework.web.bind.annotation.*;
+import ru.otus.exceptions.IncorrectUrlException;
+import ru.otus.exceptions.RouteNotFoundException;
+import ru.otus.model.domain.Route;
+import ru.otus.model.service.DBServiceRoute;
+import ru.otus.processors.RouteUrlProcessor;
+import ru.otus.processors.UrlProcessor;
+
+@RestController
+@RequestMapping("${rest.api.prefix}${rest.api.version}")
+public class RouteRestController {
+    private static final UrlProcessor<Route> urlProcessor = new RouteUrlProcessor();
+    private final DBServiceRoute dbServiceRoute;
+
+    public RouteRestController(DBServiceRoute dbServiceRoute) {
+        this.dbServiceRoute = dbServiceRoute;
+    }
+
+    @Operation(summary = "Get route url by id")
+    @GetMapping("/route/{id}/url")
+    public URL getRouteUrlById(@PathVariable(name = "id") long id) {
+        var result = dbServiceRoute.getRoute(id);
+        var route = result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
+        return urlProcessor.fromObjectToUrl(route);
+    }
+
+    @Operation(summary = "Get route by id")
+    @GetMapping("/route/{id}")
+    public Route getRouteById(@PathVariable(name = "id") long id) {
+        var result = dbServiceRoute.getRoute(id);
+        return result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
+    }
+
+    @Operation(summary = "Create/update route")
+    @PostMapping("/route")
+    public Route saveRoute(@RequestBody Route route) {
+        return dbServiceRoute.saveRoute(route);
+    }
+
+    @Operation(summary = "Create route by url")
+    @PostMapping("/route/url")
+    public Route saveRouteFromUrl(@RequestBody String strUrl) {
+        try {
+            var uri = new URI(strUrl);
+            var toSave = urlProcessor.fromUrlToObject(uri.toURL());
+            return dbServiceRoute.saveRoute(toSave);
+        } catch (URISyntaxException | MalformedURLException e) {
+            throw new IncorrectUrlException(e);
+        }
+    }
+
+    //
+    //    @Operation(summary = "Get client by name")
+    //    @GetMapping("/client")
+    //    public List<Client> getClientByName(
+    //            @Parameter(description = "Имя клиента", required = true) @RequestParam(name = "name") String name) {
+    //        return dbServiceClient.findByName(name);
+    //    }
+    //
+    //    @Operation(summary = "Get all clients")
+    //    @GetMapping("/client/all")
+    //    public List<Client> getClients() {
+    //        return dbServiceClient.findAll();
+    //    }
+    //
+    //    @Operation(summary = "Create/update client")
+    //    @PostMapping("/client")
+    //    public Client saveClient(@RequestBody Client client) {
+    //        return dbServiceClient.saveClient(client);
+    //    }
+}
