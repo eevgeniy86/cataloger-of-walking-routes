@@ -23,14 +23,14 @@ public class DBServiceRouteImpl implements DBServiceRoute {
     @Transactional
     public Route saveRoute(Route route) {
         var saved = routeRepository.save(route);
-        logger.atInfo().setMessage("Saved client: {}").addArgument(saved).log();
+        logger.atInfo().setMessage("Saved route: {}").addArgument(saved).log();
         return saved;
     }
 
     @Override
     public Optional<Route> getRoute(long id) {
         var result = routeRepository.findById(id);
-        logger.atInfo().setMessage("Get client by id: {}").addArgument(result).log();
+        logger.atInfo().setMessage("Get route by id: {}").addArgument(result).log();
         return result;
     }
 
@@ -38,7 +38,13 @@ public class DBServiceRouteImpl implements DBServiceRoute {
             Float minLength, Float maxLength, Float minAscent, Float maxAscent, Float minDescent, Float maxDescent) {
         var result = Lists.newArrayList(
                 routeRepository.filter(minLength, maxLength, minAscent, maxAscent, minDescent, maxDescent));
-        logger.atInfo().setMessage("Get clients by filter").log();
+        logger.atInfo().setMessage("Get routes by filter").log();
+        return result;
+    }
+
+    public List<Route> getRoutesWithNoDistance() {
+        var result = Lists.newArrayList(routeRepository.filterWithNoDistance());
+        logger.atInfo().setMessage("Get routes with no distance").log();
         return result;
     }
 }

@@ -68,24 +68,4 @@ public class RouteRestController {
             throw new IncorrectUrlException(e);
         }
     }
-
-    //
-    //    @Operation(summary = "Get client by name")
-    //    @GetMapping("/client")
-    //    public List<Client> getClientByName(
-    //            @Parameter(description = "Имя клиента", required = true) @RequestParam(name = "name") String name) {
-    //        return dbServiceClient.findByName(name);
-    //    }
-    //
-    //    @Operation(summary = "Get all clients")
-    //    @GetMapping("/client/all")
-    //    public List<Client> getClients() {
-    //        return dbServiceClient.findAll();
-    //    }
-    //
-    //    @Operation(summary = "Create/update client")
-    //    @PostMapping("/client")
-    //    public Client saveClient(@RequestBody Client client) {
-    //        return dbServiceClient.saveClient(client);
-    //    }
 }

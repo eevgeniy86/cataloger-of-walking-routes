@@ -32,10 +32,10 @@ public interface RouteRepository extends Repository<Route, Long> {
             @Param("maxDescent") Float maxDescent);
 
     @Query("select * from route r where r.ascent is null")
-    Iterable<Route> filterWithNotProcessedElevations();
+    Iterable<Route> filterWithNoElevations();
 
     @Query("select * from route r where r.length is null")
-    Iterable<Route> filterWithNotProcessedLength();
+    Iterable<Route> filterWithNoDistance();
 
     @Query("select * from route r where lower(r.relations_processing_status) = lower(:#{#status?.name()})")
     Iterable<Route> filterByRelationsProcessingStatus(

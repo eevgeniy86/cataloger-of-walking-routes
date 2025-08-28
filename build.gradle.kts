@@ -39,9 +39,9 @@ dependencies {
 //    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
     implementation("com.google.guava:guava")
+    implementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-
-    //   implementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 val guava: String by project
@@ -49,12 +49,14 @@ val guava: String by project
 //    val protobufBom: String by project
 //    val jmh: String by project
 //    val jetty: String by project
-//    val reflections: String by project
+    val reflections: String by project
 //    val freemarker: String by project
 //    val bootstrap: String by project
 val springDocOpenapiUi: String by project
 val jsr305: String by project
 //    val grpc: String by project
+
+val r2dbcPostgresql: String by project
 
 apply(plugin = "io.spring.dependency-management")
 dependencyManagement {
@@ -75,12 +77,15 @@ dependencyManagement {
 //            dependency("org.eclipse.jetty:jetty-io:$jetty")
 //            dependency("org.eclipse.jetty:jetty-util:$jetty")
 //            dependency("org.freemarker:freemarker:$freemarker")
-//            dependency("org.reflections:reflections:$reflections")
+            dependency("org.reflections:reflections:$reflections")
         dependency("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocOpenapiUi")
         dependency("com.google.code.findbugs:jsr305:$jsr305")
+
 //            dependency("io.grpc:grpc-protobuf:$grpc")
 //            dependency("io.grpc:grpc-stub:$grpc")
 //            dependency("io.grpc:grpc-netty:$grpc")
+
+//        dependency("io.r2dbc:r2dbc-postgresql:$r2dbcPostgresql")
     }
 }
 
