@@ -12,4 +12,6 @@ public interface DBServiceRoute {
 
     List<Route> getFilteredRoutes(
             Float minLength, Float maxLength, Float minAscent, Float maxAscent, Float minDescent, Float maxDescent);
+
+    List<Route> getRoutesWithNoDistance();
 }

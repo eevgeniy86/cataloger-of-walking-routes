@@ -1,0 +1,91 @@
+package ru.otus.suppliers;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import java.util.Comparator;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import ru.otus.exceptions.WebClientException;
+import ru.otus.model.domain.Point;
+import ru.otus.model.domain.Route;
+import ru.otus.model.domain.Waypoint;
+import ru.otus.model.service.DBServiceRoute;
+import ru.otus.processors.PointsToOSRMCoordinatesConverter;
+import ru.otus.webclient.OsrmHttpClient;
+
+@Slf4j
+@AllArgsConstructor
+public class DistancesSupplier implements Runnable {
+    private final DBServiceRoute dbService;
+    private final OsrmHttpClient httpClient;
+
+    @Override
+    public void run() {
+
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                List<Route> unprocessedRoutes = dbService.getRoutesWithNoDistance();
+                log.atInfo()
+                        .setMessage("Get unprocessed routes: {}")
+                        .addArgument(unprocessedRoutes)
+                        .log();
+
+                for (Route route : unprocessedRoutes) {
+
+                    List<Point> points = route.waypointsList().stream()
+                            .sorted(Comparator.comparingInt(Waypoint::index))
+                            .map(Waypoint::point)
+                            .toList();
+                    String coordinates = PointsToOSRMCoordinatesConverter.convertPointsToCoordinates(points);
+
+                    try {
+                        httpClient.getRoute(coordinates).subscribe(jsonStr -> saveDistanceToRoute(jsonStr, route));
+                    } catch (WebClientException e) {
+                        log.atError()
+                                .setMessage("Error while getting route distances for {}")
+                                .addArgument(route)
+                                .log();
+                    }
+                }
+                Thread.sleep(300_000);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private void saveDistanceToRoute(String jsonStr, Route route) {
+        Float distance = null;
+        try {
+            distance = getDistanceFromJson(jsonStr);
+        } catch (JsonProcessingException jpe) {
+            log.atError()
+                    .setMessage("Error while getting distance from json: {}")
+                    .addArgument(jsonStr)
+                    .log();
+        }
+        Route newRoute = new Route(
+                route.id(),
+                route.name(),
+                route.description(),
+                route.waypointsNumber(),
+                route.waypointsList(),
+                distance,
+                route.ascent(),
+                route.descent(),
+                route.relationsProcessingStatus());
+        dbService.saveRoute(newRoute);
+        log.atInfo()
+                .setMessage("Distance saved for route {}")
+                .addArgument(newRoute)
+                .log();
+    }
+
+    private float getDistanceFromJson(String jsonStr) throws JsonProcessingException {
+        JsonMapper mapper = JsonMapper.builder().build();
+        JsonNode node = mapper.readTree(jsonStr);
+        return (float) node.get("routes").get(0).get("distance").asDouble();
+    }
+}
