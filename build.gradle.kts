@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     implementation("ch.qos.logback:logback-classic")
-    implementation("org.postgresql:postgresql")
+//    implementation("org.postgresql:postgresql")
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
     implementation("org.flywaydb:flyway-core")
     compileOnly("org.projectlombok:lombok")
@@ -41,6 +41,7 @@ dependencies {
     implementation("com.google.guava:guava")
     implementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("io.r2dbc:r2dbc-postgresql")
 
 }
 
@@ -85,7 +86,7 @@ dependencyManagement {
 //            dependency("io.grpc:grpc-stub:$grpc")
 //            dependency("io.grpc:grpc-netty:$grpc")
 
-//        dependency("io.r2dbc:r2dbc-postgresql:$r2dbcPostgresql")
+        dependency("io.r2dbc:r2dbc-postgresql:$r2dbcPostgresql")
     }
 }
 

@@ -1,17 +1,17 @@
-package ru.otus.service;
+package ru.otus.model.service;
 
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.model.domain.Route;
 
 public interface DBServiceRoute {
 
-    Route saveRoute(Route route);
+    Mono<Route> saveRoute(Route route);
 
-    Optional<Route> getRoute(long id);
+    Mono<Route> getRoute(long id);
 
-    List<Route> getFilteredRoutes(
+    Flux<Route> getFilteredRoutes(
             Float minLength, Float maxLength, Float minAscent, Float maxAscent, Float minDescent, Float maxDescent);
 
-    List<Route> getRoutesWithNoDistance();
+    Flux<Route> getRoutesWithNoDistance();
 }

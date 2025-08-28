@@ -1,19 +1,22 @@
 package ru.otus.model.repository;
 
-import java.util.Optional;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.model.domain.RelationsProcessingStatus;
 import ru.otus.model.domain.Route;
 
-public interface RouteRepository extends Repository<Route, Long> {
+@Repository
+public interface RouteRepository extends ReactiveCrudRepository<Route, Long> {
 
-    Route save(Route client);
+    Mono<Route> save(Route route);
 
-    Optional<Route> findById(Long id);
+    Mono<Route> findById(Long id);
 
-    Iterable<Route> findAllById(Iterable<Long> ids);
+    Flux<Route> findAllById(Iterable<Long> ids);
 
     @Query(
             "select * from route r where "
@@ -23,7 +26,7 @@ public interface RouteRepository extends Repository<Route, Long> {
                     + "case when :maxAscent is null then true when r.ascent is null then false else r.ascent <= :maxAscent end AND "
                     + "case when :minDescent is null then true when r.descent is null then false else r.descent >= :minDescent end AND "
                     + "case when :maxDescent is null then true when r.descent is null then false else r.descent <= :maxDescent end")
-    Iterable<Route> filter(
+    Flux<Route> filter(
             @Param("minLength") Float minLength,
             @Param("maxLength") Float maxLength,
             @Param("minAscent") Float minAscent,
@@ -32,12 +35,11 @@ public interface RouteRepository extends Repository<Route, Long> {
             @Param("maxDescent") Float maxDescent);
 
     @Query("select * from route r where r.ascent is null")
-    Iterable<Route> filterWithNoElevations();
+    Flux<Route> filterWithNoElevations();
 
     @Query("select * from route r where r.length is null")
-    Iterable<Route> filterWithNoDistance();
+    Flux<Route> filterWithNoDistance();
 
     @Query("select * from route r where lower(r.relations_processing_status) = lower(:#{#status?.name()})")
-    Iterable<Route> filterByRelationsProcessingStatus(
-            @Param("relationsProcessingStatus") RelationsProcessingStatus status);
+    Flux<Route> filterByRelationsProcessingStatus(@Param("relationsProcessingStatus") RelationsProcessingStatus status);
 }
