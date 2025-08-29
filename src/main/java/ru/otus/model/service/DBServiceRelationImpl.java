@@ -1,13 +1,13 @@
 package ru.otus.model.service;
 
 import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.model.domain.Relation;
 import ru.otus.model.repository.RelationRepository;
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -40,7 +40,10 @@ public class DBServiceRelationImpl implements DBServiceRelation {
     @Override
     public List<Relation> getRelationsByRouteId(Long routeId) {
         var result = Lists.newArrayList(relationRepository.getByRouteId(routeId));
-        log.atInfo().setMessage("Get relation by route id: {}").addArgument(result).log();
+        log.atInfo()
+                .setMessage("Get relation by route id: {}")
+                .addArgument(result)
+                .log();
         return result;
     }
 }
