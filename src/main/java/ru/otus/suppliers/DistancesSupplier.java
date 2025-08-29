@@ -11,13 +11,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import ru.otus.Converters.PointsToOSRMCoordinatesConverter;
 import ru.otus.exceptions.WebClientException;
 import ru.otus.model.domain.Point;
 import ru.otus.model.domain.Route;
 import ru.otus.model.domain.Waypoint;
-import ru.otus.model.service.DBServiceRoute;
-import ru.otus.processors.PointsToOSRMCoordinatesConverter;
-import ru.otus.webclient.OsrmHttpClient;
+import ru.otus.service.DBServiceRoute;
+import ru.otus.webclient.OsrmWebClient;
 
 @Component
 @EnableScheduling
@@ -25,7 +25,7 @@ import ru.otus.webclient.OsrmHttpClient;
 @AllArgsConstructor
 public class DistancesSupplier {
     private final DBServiceRoute dbService;
-    private final OsrmHttpClient httpClient;
+    private final OsrmWebClient httpClient;
 
     @Scheduled(fixedDelay = 300_000)
     @Async

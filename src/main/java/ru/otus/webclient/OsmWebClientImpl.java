@@ -4,17 +4,18 @@ import java.time.Duration;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 import reactor.util.retry.Retry;
 import ru.otus.exceptions.WebClientException;
 
 @Service
 @AllArgsConstructor
-public class OsmHttpClientImpl implements OsmHttpClient {
+public class OsmWebClientImpl implements OsmWebClient {
     private final WebClient webClient;
 
-    public Mono<String> getPublicTransportStops(String coordinates) {
+    public Flux<String> getPublicTransportStops(String coordinates) {
 
         String url = "https://overpass-api.de/api/interpreter";
 
@@ -34,8 +35,8 @@ public class OsmHttpClientImpl implements OsmHttpClient {
                 .contentType(MediaType.TEXT_PLAIN)
                 .bodyValue(body)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToFlux(String.class)
                 .onErrorMap(WebClientException::new)
-                .retryWhen(Retry.fixedDelay(5, Duration.ofMillis(1000)));
+                .retryWhen(Retry.fixedDelay(5, Duration.ofMillis(1000)))
     }
 }

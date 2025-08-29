@@ -1,4 +1,4 @@
-package ru.otus.processors;
+package ru.otus.Converters;
 
 import java.net.*;
 import java.util.*;
@@ -12,8 +12,8 @@ import ru.otus.model.domain.RelationsProcessingStatus;
 import ru.otus.model.domain.Route;
 import ru.otus.model.domain.Waypoint;
 
-public class RouteUrlProcessor implements UrlProcessor<Route> {
-    private static final Logger logger = LoggerFactory.getLogger(RouteUrlProcessor.class);
+public class RouteUrlConverter implements UrlConverter<Route> {
+    private static final Logger logger = LoggerFactory.getLogger(RouteUrlConverter.class);
 
     private static final String protocol = "https";
     private static final String host = "yandex.ru";

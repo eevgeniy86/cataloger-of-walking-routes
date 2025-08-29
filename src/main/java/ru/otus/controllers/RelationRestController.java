@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.model.domain.Relation;
-import ru.otus.model.service.DBServiceRelation;
+import ru.otus.service.DBServiceRelation;
 
 @RestController
 @RequestMapping("${rest.api.prefix}${rest.api.version}")

@@ -14,7 +14,7 @@ public record Relation(
         @Nonnull @MappedCollection(idColumn = "id") Point firstPoint,
         @Nonnull @MappedCollection(idColumn = "id") Point secondPoint,
         @MappedCollection(idColumn = "id") Station station,
-        float distance) {
+        Float distance) {
     @Override
     public String toString() {
         return "{id=" + id + ";type=" + type + ";firstPoint=" + firstPoint + ";secondPoint=" + secondPoint + ";station="

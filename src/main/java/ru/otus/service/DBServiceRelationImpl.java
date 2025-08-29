@@ -1,4 +1,4 @@
-package ru.otus.model.service;
+package ru.otus.service;
 
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.model.domain.Relation;
-import ru.otus.model.repository.RelationRepository;
+import ru.otus.repository.RelationRepository;
 
 @Service
 @Slf4j

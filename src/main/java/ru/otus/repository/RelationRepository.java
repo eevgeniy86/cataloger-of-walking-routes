@@ -1,4 +1,4 @@
-package ru.otus.model.repository;
+package ru.otus.repository;
 
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.ListCrudRepository;

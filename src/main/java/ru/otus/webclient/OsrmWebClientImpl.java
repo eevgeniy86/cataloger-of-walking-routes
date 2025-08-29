@@ -11,7 +11,7 @@ import ru.otus.exceptions.WebClientException;
 
 @Service
 @AllArgsConstructor
-public class OsrmHttpClientImpl implements OsrmHttpClient {
+public class OsrmWebClientImpl implements OsrmWebClient {
 
     private final WebClient webClient;
     private static final String token = "AVnGv0IRBhBGetUGtYJyOU19pSRGxus7gBHYhBktiTWXikj77IA1GfMwQzM7xo9a";
