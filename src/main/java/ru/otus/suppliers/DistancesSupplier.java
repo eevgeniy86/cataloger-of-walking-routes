@@ -7,6 +7,10 @@ import java.util.Comparator;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import ru.otus.exceptions.WebClientException;
 import ru.otus.model.domain.Point;
 import ru.otus.model.domain.Route;
@@ -15,43 +19,39 @@ import ru.otus.model.service.DBServiceRoute;
 import ru.otus.processors.PointsToOSRMCoordinatesConverter;
 import ru.otus.webclient.OsrmHttpClient;
 
+@Component
+@EnableScheduling
 @Slf4j
 @AllArgsConstructor
-public class DistancesSupplier implements Runnable {
+public class DistancesSupplier {
     private final DBServiceRoute dbService;
     private final OsrmHttpClient httpClient;
 
-    @Override
-    public void run() {
+    @Scheduled(fixedDelay = 300_000)
+    @Async
+    public void start() {
 
-        while (!Thread.currentThread().isInterrupted()) {
+        List<Route> unprocessedRoutes = dbService.getRoutesWithNoDistance();
+        log.atInfo()
+                .setMessage("Get unprocessed routes: {}")
+                .addArgument(unprocessedRoutes)
+                .log();
+
+        for (Route route : unprocessedRoutes) {
+
+            List<Point> points = route.waypointsList().stream()
+                    .sorted(Comparator.comparingInt(Waypoint::index))
+                    .map(Waypoint::point)
+                    .toList();
+            String coordinates = PointsToOSRMCoordinatesConverter.convertPointsToCoordinates(points);
+
             try {
-                List<Route> unprocessedRoutes = dbService.getRoutesWithNoDistance();
-                log.atInfo()
-                        .setMessage("Get unprocessed routes: {}")
-                        .addArgument(unprocessedRoutes)
+                httpClient.getRoute(coordinates).subscribe(jsonStr -> saveDistanceToRoute(jsonStr, route));
+            } catch (WebClientException e) {
+                log.atError()
+                        .setMessage("Error while getting route distances for {}")
+                        .addArgument(route)
                         .log();
-
-                for (Route route : unprocessedRoutes) {
-
-                    List<Point> points = route.waypointsList().stream()
-                            .sorted(Comparator.comparingInt(Waypoint::index))
-                            .map(Waypoint::point)
-                            .toList();
-                    String coordinates = PointsToOSRMCoordinatesConverter.convertPointsToCoordinates(points);
-
-                    try {
-                        httpClient.getRoute(coordinates).subscribe(jsonStr -> saveDistanceToRoute(jsonStr, route));
-                    } catch (WebClientException e) {
-                        log.atError()
-                                .setMessage("Error while getting route distances for {}")
-                                .addArgument(route)
-                                .log();
-                    }
-                }
-                Thread.sleep(300_000);
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
             }
         }
     }

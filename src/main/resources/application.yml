@@ -7,9 +7,9 @@ spring:
     password: pwd
   flyway:
     enabled: true
-  mvc:
-    problemdetails:
-      enabled: false
+#  mvc:
+#    problemdetails:
+#      enabled: false
 
 server:
   port: 8080

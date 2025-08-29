@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import ru.otus.model.service.DBServiceRoute;
-import ru.otus.suppliers.DistancesSupplier;
 import ru.otus.webclient.OsrmHttpClient;
 
 @Slf4j
@@ -17,8 +16,9 @@ public class SuppliersLauncher implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-
-        Thread distancesThread = new Thread(new DistancesSupplier(dbServiceRoute, httpClient), "DistancesSupplier");
-        distancesThread.start();
+        //
+        //        Thread distancesThread = new Thread(new DistancesSupplier(dbServiceRoute, httpClient),
+        // "DistancesSupplier");
+        //        distancesThread.start();
     }
 }
