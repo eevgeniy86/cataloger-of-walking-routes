@@ -1,6 +1,7 @@
 package ru.otus.model.service;
 
 import java.util.List;
+import java.util.Optional;
 import ru.otus.model.domain.Relation;
 
 public interface DBServiceRelation {
@@ -9,7 +10,7 @@ public interface DBServiceRelation {
 
     List<Relation> saveAll(List<Relation> relations);
 
-    Relation getRelation(Long id);
+    Optional<Relation> getRelation(Long id);
 
     List<Relation> getRelationsByRouteId(Long routeId);
 }
