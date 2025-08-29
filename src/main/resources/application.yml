@@ -1,4 +1,6 @@
 spring:
+  aop:
+    proxy-target-class: false
   datasource:
     url: jdbc:postgresql://localhost:5430/demoDB
     username: usr
@@ -8,6 +10,8 @@ spring:
   mvc:
     problemdetails:
       enabled: false
+autoconfigure:
+  exclude: org.springframework.oot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
 server:
   port: 8080
