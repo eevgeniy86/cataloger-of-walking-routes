@@ -9,7 +9,7 @@ import ru.otus.model.domain.Route;
 
 public interface RouteRepository extends Repository<Route, Long> {
 
-    Route save(Route client);
+    Route save(Route route);
 
     Optional<Route> findById(Long id);
 
