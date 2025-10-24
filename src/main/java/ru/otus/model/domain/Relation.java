@@ -7,17 +7,24 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("relation")
+// public record Relation(
+//        @Id @Column("id") Long id,
+//        long routeId,
+//        @Nonnull RelationType type,
+//        @Nonnull @MappedCollection(idColumn = "id") Point firstPoint,
+//        @Nonnull @MappedCollection(idColumn = "id") Point secondPoint,
+//        @MappedCollection(idColumn = "id") Station station,
+//        Float distance)
+
 public record Relation(
         @Id @Column("id") Long id,
         long routeId,
         @Nonnull RelationType type,
-        @Nonnull @MappedCollection(idColumn = "id") Point firstPoint,
-        @Nonnull @MappedCollection(idColumn = "id") Point secondPoint,
         @MappedCollection(idColumn = "id") Station station,
         Float distance) {
+
     @Override
     public String toString() {
-        return "{id=" + id + ";type=" + type + ";firstPoint=" + firstPoint + ";secondPoint=" + secondPoint + ";station="
-                + station + "}";
+        return "{id=" + id + ";type=" + type + ";station=" + station + "}";
     }
 }

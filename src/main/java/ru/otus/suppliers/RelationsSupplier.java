@@ -3,10 +3,7 @@ package ru.otus.suppliers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -18,6 +15,7 @@ import ru.otus.exceptions.WebClientException;
 import ru.otus.model.domain.*;
 import ru.otus.service.DBServiceRelation;
 import ru.otus.service.DBServiceRoute;
+import ru.otus.service.DBServiceStation;
 import ru.otus.webclient.OsmWebClient;
 
 @Component
@@ -27,7 +25,10 @@ import ru.otus.webclient.OsmWebClient;
 public class RelationsSupplier {
     private final DBServiceRoute dbRoute;
     private final DBServiceRelation dbRelation;
+    private final DBServiceStation dbStation;
+
     private final OsmWebClient httpClient;
+
     private static final String busStopKey = "highway";
     private static final String busStopValue = "bus_stop";
     private static final String railStopKey = "railway";
@@ -35,14 +36,25 @@ public class RelationsSupplier {
     private static final String subwayKey = "subway";
     private static final String trainKey = "train";
 
+    private Map<Long, Long> stationIds;
+
+    /*
+        Using reduce to mono method while handling getPublicTransportStops response,
+        instead of working with flux response,
+        because Overpass api chunked response contains string parts, not valid json-objects
+    */
     @Scheduled(fixedDelay = 300_000)
     @Async
     public void start() {
 
+        if (stationIds == null) {
+            stationIds = dbStation.getAllIds();
+        }
+
         List<Route> routesWithoutRelations =
                 dbRoute.getRoutesByRelationsProcessingStatus(RelationsProcessingStatus.NOT_PROCESSED);
         log.atInfo()
-                .setMessage("Get unprocessed routes: {}")
+                .setMessage("Get routes without relations: {}")
                 .addArgument(routesWithoutRelations)
                 .log();
 
@@ -60,10 +72,17 @@ public class RelationsSupplier {
             final String[] jsonStrings = new String[2];
 
             try {
-                jsonStrings[0] = httpClient.getPublicTransportStops(startCoordinates).reduce("", (a, b) -> a + b).block();
-                httpClient.getPublicTransportStops(finishCoordinates).subscribe(jsonStr -> jsonStrings[1] = jsonStr);
-                log.atInfo().setMessage("ALARM {}").addArgument(jsonStrings).log();
-                saveRelationsToRoute(route, start, finish, jsonStrings);
+                jsonStrings[0] = httpClient
+                        .getPublicTransportStops(startCoordinates)
+                        .reduce("", (a, b) -> a + b)
+                        .block();
+                //               .subscribe(a -> jsonStrings[0] = a);
+                jsonStrings[1] = httpClient
+                        .getPublicTransportStops(finishCoordinates)
+                        .reduce("", (a, b) -> a + b)
+                        .block();
+                //               .subscribe(a -> jsonStrings[1] = a);
+                saveRelationsToRoute(route, jsonStrings);
 
             } catch (WebClientException | JsonProcessingException e) {
                 log.atError()
@@ -101,25 +120,29 @@ public class RelationsSupplier {
         }
     }
 
-    private void saveRelationsToRoute(Route route, Point start, Point finish, String[] jsonStrings)
-            throws JsonProcessingException {
+    private void saveRelationsToRoute(Route route, String[] jsonStrings) throws JsonProcessingException {
 
         List<Relation> relations = new ArrayList<>();
-        relations.add(new Relation(null, route.id(), RelationType.START_FINISH, start, finish, null, null));
+        relations.add(new Relation(null, route.id(), RelationType.START_FINISH, null, null));
 
         // public Station(Long id, String name, String network, StationType type, boolean isNew)
 
-        List<Relation> relationsStart =
-                getRelationsFromJson(jsonStrings[0], route.id(), start, RelationType.START_STATION);
-        List<Relation> stationsFinish =
-                getRelationsFromJson(jsonStrings[1], route.id(), start, RelationType.FINISH_STATION);
+        List<Relation> relationsStart = getRelationsFromJson(jsonStrings[0], route.id(), RelationType.START_STATION);
+        List<Relation> relationsFinish = getRelationsFromJson(jsonStrings[1], route.id(), RelationType.FINISH_STATION);
         relations.addAll(relationsStart);
-        relations.addAll(stationsFinish);
-        dbRelation.saveAll(relations);
+        relations.addAll(relationsFinish);
+
+        for (Relation r : relations) {
+            r = dbRelation.saveRelation(r);
+            if (r.station() != null) {
+                stationIds.put(r.station().osm_id(), r.station().id());
+            }
+        }
+        //   dbRelation.saveAll(relations);
     }
 
-    private List<Relation> getRelationsFromJson(
-            String jsonStr, Long routeId, Point firstPoint, RelationType relationType) throws JsonProcessingException {
+    private List<Relation> getRelationsFromJson(String jsonStr, Long routeId, RelationType relationType)
+            throws JsonProcessingException {
         List<Relation> result = new ArrayList<>();
         JsonMapper mapper = JsonMapper.builder().build();
         JsonNode node = mapper.readTree(jsonStr);
@@ -141,13 +164,17 @@ public class RelationsSupplier {
                 }
             }
             if (stationType != null) {
+
+                Long stationDBId = stationIds.get(id);
+
                 result.add(new Relation(
                         null,
                         routeId,
                         relationType,
-                        firstPoint,
-                        new Point(null, latitude, longitude, null),
-                        new Station(id, name, null, stationType, true),
+                        //     firstPoint,
+
+                        new Station(
+                                stationDBId, id, name, null, stationType, new Point(null, latitude, longitude, null)),
                         null));
             }
         }

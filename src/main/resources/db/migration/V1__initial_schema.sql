@@ -9,9 +9,12 @@ create table point
 create table station
 (
     id bigserial not null primary key,
+    osm_id bigserial not null,
     name varchar(250),
     network varchar(250),
-    type varchar(50)
+    type varchar(50),
+    point_id bigint,
+    foreign key (point_id) references point (id)
 );
 
 create table route
@@ -31,24 +34,19 @@ create table waypoint
     id bigserial not null primary key,
     index smallint not null,
     route_id bigint not null,
-    point_id bigint,
+    point_id bigint not null,
     comment varchar(1000),
     foreign key (route_id) references route (id),
     foreign key (point_id) references point (id)
 );
-
 create table relation
 (
     id bigserial not null primary key,
     route_id bigint not null,
     type varchar(50) not null,
-    first_point_id bigint,
-    second_point_id bigint,
     station_id bigint,
     distance numeric(8,1),
     foreign key (route_id) references route (id),
-    foreign key (first_point_id) references point (id),
-    foreign key (second_point_id) references point (id),
     foreign key (station_id) references station (id)
 );
 

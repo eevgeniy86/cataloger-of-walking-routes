@@ -4,7 +4,6 @@ import java.time.Duration;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.util.retry.Retry;
@@ -37,6 +36,7 @@ public class OsmWebClientImpl implements OsmWebClient {
                 .retrieve()
                 .bodyToFlux(String.class)
                 .onErrorMap(WebClientException::new)
-                .retryWhen(Retry.fixedDelay(5, Duration.ofMillis(1000)))
+                .retryWhen(Retry.fixedDelay(5, Duration.ofMillis(1000)));
+        // .subscribe(string -> System.out.println(string));
     }
 }
