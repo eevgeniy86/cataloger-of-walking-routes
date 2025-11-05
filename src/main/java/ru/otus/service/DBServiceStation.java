@@ -4,5 +4,5 @@ import java.util.Set;
 
 public interface DBServiceStation {
 
-    public Set<Long> getAllIds();
+    Set<Long> getAllIds();
 }

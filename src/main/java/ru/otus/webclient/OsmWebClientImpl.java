@@ -20,11 +20,13 @@ public class OsmWebClientImpl implements OsmWebClient {
 
         // 55.7558,37.6176 - lat,long
         String body = String.format(
-                "[out:json][timeout:180];\n" + "(\n"
-                        + "  node(around:1000,%1$s)[highway=\"bus_stop\"]; //остановка с павильоном\n"
-                        + "  node(around:1000,%1$s)[railway=\"station\"]; //жд станция (грузовая или пассажирская)\n"
-                        + ");\n"
-                        + "out;",
+                """
+                        [out:json][timeout:180];
+                        (
+                          node(around:1000,%1$s)[highway="bus_stop"]; //остановка с павильоном
+                          node(around:1000,%1$s)[railway="station"]; //жд станция (грузовая или пассажирская)
+                        );
+                        out;""",
                 coordinates);
 
         return webClient

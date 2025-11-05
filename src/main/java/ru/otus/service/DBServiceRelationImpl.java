@@ -41,6 +41,12 @@ public class DBServiceRelationImpl implements DBServiceRelation {
     @Override
     @Transactional
     public List<Relation> getRelationsByRouteId(Long routeId) {
-        return Lists.newArrayList(relationGetRepository.getByRouteId(routeId));
+
+        var result = Lists.newArrayList(relationGetRepository.getByRouteId(routeId));
+        log.atInfo()
+                .setMessage("Get relation by route id: {}")
+                .addArgument(result)
+                .log();
+        return result;
     }
 }

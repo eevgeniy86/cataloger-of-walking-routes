@@ -12,8 +12,6 @@ public interface RouteRepository extends Repository<Route, Long> {
 
     Optional<Route> findById(Long id);
 
-   // Iterable<Route> findAllById(Iterable<Long> ids);
-
     @Query(
             "select * from route r where "
                     + "case when :minLength is null then true when r.length is null then false else r.length >= :minLength end AND "

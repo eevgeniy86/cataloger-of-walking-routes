@@ -9,7 +9,7 @@ import ru.otus.model.domain.*;
 public class RelationMapper implements RowMapper<Relation> {
     @Nonnull
     @Override
-    public Relation mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Relation mapRow(@Nonnull ResultSet rs, int rowNum) throws SQLException {
         Station station;
         if (rs.getString("station_type") != null) {
             Point point =

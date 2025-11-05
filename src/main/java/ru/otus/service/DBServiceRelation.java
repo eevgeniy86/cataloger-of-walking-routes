@@ -1,7 +1,6 @@
 package ru.otus.service;
 
 import java.util.List;
-import java.util.Optional;
 import ru.otus.model.domain.Relation;
 
 public interface DBServiceRelation {
