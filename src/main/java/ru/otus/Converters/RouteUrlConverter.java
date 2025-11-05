@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import ru.otus.exceptions.IncorrectUrlException;
 import ru.otus.exceptions.UrlConstructorException;
 import ru.otus.model.domain.Point;
@@ -12,6 +13,7 @@ import ru.otus.model.domain.RelationsProcessingStatus;
 import ru.otus.model.domain.Route;
 import ru.otus.model.domain.Waypoint;
 
+@Component
 public class RouteUrlConverter implements UrlConverter<Route> {
     private static final Logger logger = LoggerFactory.getLogger(RouteUrlConverter.class);
 
@@ -74,7 +76,7 @@ public class RouteUrlConverter implements UrlConverter<Route> {
         }
     }
 
-    private static String[] getCoordinatesArray(URL url) {
+    private String[] getCoordinatesArray(URL url) {
         String queryStr = url.getQuery().toLowerCase();
         return queryStr.substring(
                         queryStr.indexOf(queryWaypointsParamName) + queryWaypointsParamName.length(),
@@ -83,7 +85,7 @@ public class RouteUrlConverter implements UrlConverter<Route> {
     }
 
     // pointsStringArray format: [55.620324%2C37.696012, 55.623574%2C37.705061]
-    private static Route getRouteFromCoordinatesArray(String[] pointsStringArray) {
+    private Route getRouteFromCoordinatesArray(String[] pointsStringArray) {
         Set<Waypoint> waypoints = new HashSet<>();
         short index = 0;
         for (String s : pointsStringArray) {
@@ -91,7 +93,7 @@ public class RouteUrlConverter implements UrlConverter<Route> {
             var latitude = coordinatesArray[0];
             var longitude = coordinatesArray[1];
             waypoints.add(new Waypoint(
-                    null, index, null, new Point(null, Float.parseFloat(latitude), Float.parseFloat(longitude), null)));
+                    null, index, null, new Point(null, Float.parseFloat(latitude), Float.parseFloat(longitude))));
             index++;
         }
         return new Route(null, null, null, index, waypoints, null, null, null, RelationsProcessingStatus.NOT_PROCESSED);

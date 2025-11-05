@@ -16,7 +16,7 @@ public class RelationRestController {
 
     @Operation(summary = "Get relations by route_id")
     @GetMapping("/route/{id}/relation")
-    public List<Relation> getRelationsByRouteId(@PathVariable(name = "id") long route_id) {
-        return dbServiceRelation.getRelationsByRouteId(route_id);
+    public List<Relation> getRelationsByRouteId(@PathVariable(name = "id") long routeId) {
+        return dbServiceRelation.getRelationsByRouteId(routeId);
     }
 }

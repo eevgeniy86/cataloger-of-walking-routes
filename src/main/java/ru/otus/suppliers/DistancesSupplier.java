@@ -26,6 +26,7 @@ import ru.otus.webclient.OsrmWebClient;
 public class DistancesSupplier {
     private final DBServiceRoute dbService;
     private final OsrmWebClient httpClient;
+    private final PointsToOSRMCoordinatesConverter converter;
 
     @Scheduled(fixedDelay = 300_000)
     @Async
@@ -43,7 +44,7 @@ public class DistancesSupplier {
                     .sorted(Comparator.comparingInt(Waypoint::index))
                     .map(Waypoint::point)
                     .toList();
-            String coordinates = PointsToOSRMCoordinatesConverter.convertPointsToCoordinates(points);
+            String coordinates = converter.convertPointsToCoordinates(points);
 
             try {
                 httpClient.getRoute(coordinates).subscribe(jsonStr -> saveDistanceToRoute(jsonStr, route));

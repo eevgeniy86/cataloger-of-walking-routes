@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.otus.Converters.PointsToOSMCoordinatesConverter;
+import ru.otus.exceptions.JsonParsingException;
 import ru.otus.exceptions.WebClientException;
 import ru.otus.model.domain.*;
 import ru.otus.service.DBServiceRelation;
@@ -23,6 +24,8 @@ import ru.otus.webclient.OsmWebClient;
 @Slf4j
 @AllArgsConstructor
 public class RelationsSupplier {
+
+    private final PointsToOSMCoordinatesConverter converter;
     private final DBServiceRoute dbRoute;
     private final DBServiceRelation dbRelation;
     private final DBServiceStation dbStation;
@@ -36,7 +39,7 @@ public class RelationsSupplier {
     private static final String subwayKey = "subway";
     private static final String trainKey = "train";
 
-    private Map<Long, Long> stationIds;
+    private static Set<Long> stationIds;
 
     /*
         Using reduce to mono method while handling getPublicTransportStops response,
@@ -48,102 +51,107 @@ public class RelationsSupplier {
     public void start() {
 
         if (stationIds == null) {
-            stationIds = dbStation.getAllIds();
+            getStationIdsFromDb();
         }
+        List<Route> routesWithoutRelations = getRoutesWithoutRelations();
+        for (Route route : routesWithoutRelations) {
+            try {
+                List<Relation> relations = getRelationsToRoute(route);
+                saveRelationsToRoute(route, relations);
+            } catch (WebClientException | JsonParsingException e) {
+                saveErrorForRoute(route, e);
+                stationIds = null;
+            }
+        }
+    }
 
+    private void saveRelationsToRoute(Route route, List<Relation> relations) {
+        for (Relation r : relations) {
+            dbRelation.saveRelation(r);
+        }
+        Route newRoute = new Route(
+                route.id(),
+                route.name(),
+                route.description(),
+                route.waypointsNumber(),
+                route.waypointsList(),
+                route.length(),
+                route.ascent(),
+                route.descent(),
+                RelationsProcessingStatus.STATIONS_GET);
+        dbRoute.saveRoute(newRoute);
+        log.atInfo()
+                .setMessage("Relations added for route {}")
+                .addArgument(newRoute)
+                .log();
+    }
+
+    private void saveErrorForRoute(Route route, Exception e) {
+        log.atError()
+                .setMessage("Error while getting stations for {}, message: {}")
+                .addArgument(route)
+                .addArgument(e.getMessage())
+                .log();
+        Route newRoute = new Route(
+                route.id(),
+                route.name(),
+                route.description(),
+                route.waypointsNumber(),
+                route.waypointsList(),
+                route.length(),
+                route.ascent(),
+                route.descent(),
+                RelationsProcessingStatus.STATIONS_ERROR);
+        dbRoute.saveRoute(newRoute);
+    }
+
+    private List<Route> getRoutesWithoutRelations() {
         List<Route> routesWithoutRelations =
                 dbRoute.getRoutesByRelationsProcessingStatus(RelationsProcessingStatus.NOT_PROCESSED);
         log.atInfo()
                 .setMessage("Get routes without relations: {}")
                 .addArgument(routesWithoutRelations)
                 .log();
-
-        for (Route route : routesWithoutRelations) {
-
-            List<Point> points = route.waypointsList().stream()
-                    .sorted(Comparator.comparingInt(Waypoint::index))
-                    .map(Waypoint::point)
-                    .toList();
-
-            Point start = points.getFirst();
-            Point finish = points.getLast();
-            String startCoordinates = PointsToOSMCoordinatesConverter.convertPointToCoordinates(start);
-            String finishCoordinates = PointsToOSMCoordinatesConverter.convertPointToCoordinates(finish);
-            final String[] jsonStrings = new String[2];
-
-            try {
-                jsonStrings[0] = httpClient
-                        .getPublicTransportStops(startCoordinates)
-                        .reduce("", (a, b) -> a + b)
-                        .block();
-                //               .subscribe(a -> jsonStrings[0] = a);
-                jsonStrings[1] = httpClient
-                        .getPublicTransportStops(finishCoordinates)
-                        .reduce("", (a, b) -> a + b)
-                        .block();
-                //               .subscribe(a -> jsonStrings[1] = a);
-                saveRelationsToRoute(route, jsonStrings);
-
-            } catch (WebClientException | JsonProcessingException e) {
-                log.atError()
-                        .setMessage("Error while getting stations for {}, message: {}")
-                        .addArgument(route)
-                        .addArgument(e.getMessage())
-                        .log();
-                Route newRoute = new Route(
-                        route.id(),
-                        route.name(),
-                        route.description(),
-                        route.waypointsNumber(),
-                        route.waypointsList(),
-                        route.length(),
-                        route.ascent(),
-                        route.descent(),
-                        RelationsProcessingStatus.STATIONS_ERROR);
-                dbRoute.saveRoute(newRoute);
-            }
-            Route newRoute = new Route(
-                    route.id(),
-                    route.name(),
-                    route.description(),
-                    route.waypointsNumber(),
-                    route.waypointsList(),
-                    route.length(),
-                    route.ascent(),
-                    route.descent(),
-                    RelationsProcessingStatus.STATIONS_GET);
-            dbRoute.saveRoute(newRoute);
-            log.atInfo()
-                    .setMessage("Relations added for route {}")
-                    .addArgument(newRoute)
-                    .log();
-        }
+        return routesWithoutRelations;
     }
 
-    private void saveRelationsToRoute(Route route, String[] jsonStrings) throws JsonProcessingException {
+    private void getStationIdsFromDb() {
+        stationIds = dbStation.getAllIds();
+    }
 
+    private List<Relation> getRelationsToRoute(Route route) throws WebClientException, JsonParsingException {
+        List<Point> points = route.waypointsList().stream()
+                .sorted(Comparator.comparingInt(Waypoint::index))
+                .map(Waypoint::point)
+                .toList();
         List<Relation> relations = new ArrayList<>();
         relations.add(new Relation(null, route.id(), RelationType.START_FINISH, null, null));
-
-        // public Station(Long id, String name, String network, StationType type, boolean isNew)
-
-        List<Relation> relationsStart = getRelationsFromJson(jsonStrings[0], route.id(), RelationType.START_STATION);
-        List<Relation> relationsFinish = getRelationsFromJson(jsonStrings[1], route.id(), RelationType.FINISH_STATION);
-        relations.addAll(relationsStart);
-        relations.addAll(relationsFinish);
-
-        for (Relation r : relations) {
-            r = dbRelation.saveRelation(r);
-            if (r.station() != null) {
-                stationIds.put(r.station().osm_id(), r.station().id());
-            }
+        for (Station s : getStationsToPoint(points.getFirst())) {
+            relations.add(new Relation(null, route.id(), RelationType.START_STATION, null, s));
         }
-        //   dbRelation.saveAll(relations);
+        for (Station s : getStationsToPoint(points.getLast())) {
+            relations.add(new Relation(null, route.id(), RelationType.FINISH_STATION, null, s));
+        }
+        return relations;
     }
 
-    private List<Relation> getRelationsFromJson(String jsonStr, Long routeId, RelationType relationType)
-            throws JsonProcessingException {
-        List<Relation> result = new ArrayList<>();
+    private List<Station> getStationsToPoint(Point point) throws WebClientException, JsonParsingException {
+        String coordinates = converter.convertPointToCoordinates(point);
+        List<Station> stations;
+        String jsonStr = httpClient
+                .getPublicTransportStops(coordinates)
+                .reduce("", (a, b) -> a + b)
+                .block();
+        try {
+            stations = new ArrayList<>(getStationsFromJson((jsonStr)));
+        } catch (JsonProcessingException e) {
+            throw new JsonParsingException(e.getMessage());
+        }
+        return stations;
+    }
+
+    private List<Station> getStationsFromJson(String jsonStr) throws JsonProcessingException {
+        List<Station> result = new ArrayList<>();
         JsonMapper mapper = JsonMapper.builder().build();
         JsonNode node = mapper.readTree(jsonStr);
         for (Iterator<JsonNode> it = node.get("elements").elements(); it.hasNext(); ) {
@@ -164,21 +172,11 @@ public class RelationsSupplier {
                 }
             }
             if (stationType != null) {
-
-                Long stationDBId = stationIds.get(id);
-
-                result.add(new Relation(
-                        null,
-                        routeId,
-                        relationType,
-                        //     firstPoint,
-
-                        new Station(
-                                stationDBId, id, name, null, stationType, new Point(null, latitude, longitude, null)),
-                        null));
+                result.add(
+                        new Station(id, name, stationType, new Point(null, latitude, longitude), stationIds.add(id)));
             }
         }
-
+        System.out.println(result);
         return result;
     }
 }

@@ -11,7 +11,7 @@ public record Waypoint(
         @Id @Column("id") Long id,
         short index,
         String comment,
-        @Nonnull @MappedCollection(idColumn = "id") Point point) {
+        @Nonnull @MappedCollection(idColumn = "waypoint_id") Point point) {
     @Override
     public String toString() {
         return "{id=" + id + ";index=" + index + ";point=" + point + "}";

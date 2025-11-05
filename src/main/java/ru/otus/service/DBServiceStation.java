@@ -1,8 +1,8 @@
 package ru.otus.service;
 
-import java.util.Map;
+import java.util.Set;
 
 public interface DBServiceStation {
 
-    public Map<Long, Long> getAllIds();
+    public Set<Long> getAllIds();
 }

@@ -1,6 +1,5 @@
 package ru.otus.model.domain;
 
-import jakarta.annotation.Nonnull;
 import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
@@ -13,7 +12,7 @@ public record Route(
         String name,
         String description,
         short waypointsNumber,
-        @Nonnull @MappedCollection(idColumn = "route_id") Set<Waypoint> waypointsList,
+        @MappedCollection(idColumn = "route_id") Set<Waypoint> waypointsList,
         Float length,
         Float ascent,
         Float descent,

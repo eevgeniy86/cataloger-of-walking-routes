@@ -1,13 +1,13 @@
 package ru.otus.repository;
 
-import java.util.Map;
+import java.util.Set;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 import ru.otus.model.domain.Station;
 
 public interface StationRepository extends Repository<Station, Long> {
-    @Query("select osm_id, id from station")
-    Map<Long, Long> getAllIds();
+    @Query("select s.osm_id as id from station s")
+    Set<Long> getAllIds();
 
     Station save(Station station);
 }

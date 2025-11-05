@@ -37,6 +37,5 @@ public class OsmWebClientImpl implements OsmWebClient {
                 .bodyToFlux(String.class)
                 .onErrorMap(WebClientException::new)
                 .retryWhen(Retry.fixedDelay(5, Duration.ofMillis(1000)));
-        // .subscribe(string -> System.out.println(string));
     }
 }

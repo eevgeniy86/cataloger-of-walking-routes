@@ -12,7 +12,7 @@ public interface RouteRepository extends Repository<Route, Long> {
 
     Optional<Route> findById(Long id);
 
-    Iterable<Route> findAllById(Iterable<Long> ids);
+   // Iterable<Route> findAllById(Iterable<Long> ids);
 
     @Query(
             "select * from route r where "

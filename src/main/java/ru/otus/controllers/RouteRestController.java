@@ -17,7 +17,7 @@ import ru.otus.service.DBServiceRoute;
 @RestController
 @RequestMapping("${rest.api.prefix}${rest.api.version}")
 public class RouteRestController {
-    private static final UrlConverter<Route> URL_CONVERTER = new RouteUrlConverter();
+    private final UrlConverter<Route> urlConverter = new RouteUrlConverter();
     private final DBServiceRoute dbServiceRoute;
 
     public RouteRestController(DBServiceRoute dbServiceRoute) {
@@ -29,7 +29,7 @@ public class RouteRestController {
     public URL getRouteUrlById(@PathVariable(name = "id") long id) {
         var result = dbServiceRoute.getRoute(id);
         var route = result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
-        return URL_CONVERTER.fromObjectToUrl(route);
+        return urlConverter.fromObjectToUrl(route);
     }
 
     @Operation(summary = "Get route by id")
@@ -62,7 +62,7 @@ public class RouteRestController {
     public Route saveRouteFromUrl(@RequestBody String strUrl) {
         try {
             var uri = new URI(strUrl);
-            var toSave = URL_CONVERTER.fromUrlToObject(uri.toURL());
+            var toSave = urlConverter.fromUrlToObject(uri.toURL());
             return dbServiceRoute.saveRoute(toSave);
         } catch (URISyntaxException | MalformedURLException e) {
             throw new IncorrectUrlException(e);
