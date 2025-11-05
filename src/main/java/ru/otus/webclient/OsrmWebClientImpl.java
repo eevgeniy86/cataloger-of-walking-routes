@@ -11,10 +11,11 @@ import ru.otus.exceptions.WebClientException;
 
 @Service
 @AllArgsConstructor
-public class OsrmHttpClientImpl implements OsrmHttpClient {
+public class OsrmWebClientImpl implements OsrmWebClient {
 
     private final WebClient webClient;
     private static final String token = "AVnGv0IRBhBGetUGtYJyOU19pSRGxus7gBHYhBktiTWXikj77IA1GfMwQzM7xo9a";
+    private static final int timeout = 10_000;
 
     // GET
     // https://api.jawg.io/routing/route/v1/walk/37.696012,55.620324;37.705061,55.623574?access-token=AVnGv0IRBhBGetUGtYJyOU19pSRGxus7gBHYhBktiTWXikj77IA1GfMwQzM7xo9a&overview=false}
@@ -29,6 +30,7 @@ public class OsrmHttpClientImpl implements OsrmHttpClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(String.class)
+                .timeout(Duration.ofMillis(timeout))
                 .onErrorMap(WebClientException::new)
                 .retryWhen(Retry.fixedDelay(5, Duration.ofMillis(1000)));
     }

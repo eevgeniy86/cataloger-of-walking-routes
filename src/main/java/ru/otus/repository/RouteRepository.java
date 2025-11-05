@@ -1,10 +1,9 @@
-package ru.otus.model.repository;
+package ru.otus.repository;
 
 import java.util.Optional;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
-import ru.otus.model.domain.RelationsProcessingStatus;
 import ru.otus.model.domain.Route;
 
 public interface RouteRepository extends Repository<Route, Long> {
@@ -13,7 +12,7 @@ public interface RouteRepository extends Repository<Route, Long> {
 
     Optional<Route> findById(Long id);
 
-    Iterable<Route> findAllById(Iterable<Long> ids);
+   // Iterable<Route> findAllById(Iterable<Long> ids);
 
     @Query(
             "select * from route r where "
@@ -37,7 +36,6 @@ public interface RouteRepository extends Repository<Route, Long> {
     @Query("select * from route r where r.length is null")
     Iterable<Route> filterWithNoDistance();
 
-    @Query("select * from route r where lower(r.relations_processing_status) = lower(:#{#status?.name()})")
-    Iterable<Route> filterByRelationsProcessingStatus(
-            @Param("relationsProcessingStatus") RelationsProcessingStatus status);
+    @Query("select * from route r where lower(r.relations_processing_status) = lower(:status)")
+    Iterable<Route> filterByRelationsProcessingStatus(@Param("status") String status);
 }

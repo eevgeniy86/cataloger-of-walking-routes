@@ -11,13 +11,11 @@ public record Relation(
         @Id @Column("id") Long id,
         long routeId,
         @Nonnull RelationType type,
-        @Nonnull @MappedCollection(idColumn = "id") Point firstPoint,
-        @Nonnull @MappedCollection(idColumn = "id") Point secondPoint,
-        @MappedCollection(idColumn = "id") Station station,
-        float distance) {
+        Float distance,
+        @MappedCollection(idColumn = "osm_id") @Column("station_id") Station station) {
+
     @Override
     public String toString() {
-        return "{id=" + id + ";type=" + type + ";firstPoint=" + firstPoint + ";secondPoint=" + secondPoint + ";station="
-                + station + "}";
+        return "{id=" + id + ";type=" + type + "}";
     }
 }

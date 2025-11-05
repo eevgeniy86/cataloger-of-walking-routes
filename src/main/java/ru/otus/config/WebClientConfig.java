@@ -13,7 +13,7 @@ import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 @Configuration
 public class WebClientConfig {
-    public static final int timeout = 100_000;
+    public static final int timeout = 300_000;
 
     @Bean
     public WebClient webClient() {

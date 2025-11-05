@@ -7,17 +7,17 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
+import ru.otus.Converters.RouteUrlConverter;
+import ru.otus.Converters.UrlConverter;
 import ru.otus.exceptions.IncorrectUrlException;
 import ru.otus.exceptions.RouteNotFoundException;
 import ru.otus.model.domain.Route;
-import ru.otus.model.service.DBServiceRoute;
-import ru.otus.processors.RouteUrlProcessor;
-import ru.otus.processors.UrlProcessor;
+import ru.otus.service.DBServiceRoute;
 
 @RestController
 @RequestMapping("${rest.api.prefix}${rest.api.version}")
 public class RouteRestController {
-    private static final UrlProcessor<Route> urlProcessor = new RouteUrlProcessor();
+    private final UrlConverter<Route> urlConverter = new RouteUrlConverter();
     private final DBServiceRoute dbServiceRoute;
 
     public RouteRestController(DBServiceRoute dbServiceRoute) {
@@ -29,7 +29,7 @@ public class RouteRestController {
     public URL getRouteUrlById(@PathVariable(name = "id") long id) {
         var result = dbServiceRoute.getRoute(id);
         var route = result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
-        return urlProcessor.fromObjectToUrl(route);
+        return urlConverter.fromObjectToUrl(route);
     }
 
     @Operation(summary = "Get route by id")
@@ -62,7 +62,7 @@ public class RouteRestController {
     public Route saveRouteFromUrl(@RequestBody String strUrl) {
         try {
             var uri = new URI(strUrl);
-            var toSave = urlProcessor.fromUrlToObject(uri.toURL());
+            var toSave = urlConverter.fromUrlToObject(uri.toURL());
             return dbServiceRoute.saveRoute(toSave);
         } catch (URISyntaxException | MalformedURLException e) {
             throw new IncorrectUrlException(e);

@@ -1,4 +1,4 @@
-package ru.otus.model.service;
+package ru.otus.service;
 
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.model.domain.RelationsProcessingStatus;
 import ru.otus.model.domain.Route;
-import ru.otus.model.repository.RouteRepository;
+import ru.otus.repository.RouteRepository;
 
 @Service
 public class DBServiceRouteImpl implements DBServiceRoute {
@@ -45,6 +46,15 @@ public class DBServiceRouteImpl implements DBServiceRoute {
     public List<Route> getRoutesWithNoDistance() {
         var result = Lists.newArrayList(routeRepository.filterWithNoDistance());
         logger.atInfo().setMessage("Get routes with no distance").log();
+        return result;
+    }
+
+    public List<Route> getRoutesByRelationsProcessingStatus(RelationsProcessingStatus status) {
+        var result = Lists.newArrayList(routeRepository.filterByRelationsProcessingStatus(status.name()));
+        logger.atInfo()
+                .setMessage("Get routes by relations processing status: {}")
+                .addArgument(status)
+                .log();
         return result;
     }
 }
