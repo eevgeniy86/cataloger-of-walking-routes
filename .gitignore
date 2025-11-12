@@ -37,3 +37,4 @@ out
 *.ipr
 *.idea
 
+/src/main/resources/application-api-clients.yml
