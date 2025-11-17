@@ -19,7 +19,7 @@ idea {
     }
 }
 
-group = "ru.otus"
+group = "ru.elistratov"
 repositories {
     mavenLocal()
     mavenCentral()

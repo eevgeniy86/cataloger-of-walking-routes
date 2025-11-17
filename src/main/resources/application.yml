@@ -7,9 +7,8 @@ spring:
     password: pwd
   flyway:
     enabled: true
-#  mvc:
-#    problemdetails:
-#      enabled: false
+  profiles:
+    include: 'api-clients'
 
 server:
   port: 8080
