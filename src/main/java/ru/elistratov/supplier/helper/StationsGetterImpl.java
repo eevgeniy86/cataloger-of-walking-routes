@@ -14,10 +14,10 @@ import ru.elistratov.supplier.jsommapper.OsmJsonMapper;
 import ru.elistratov.webclient.OsmWebClient;
 
 /*
-       Using reduce to mono and block method while handling getPublicTransportStops response,
-       instead of working with flux response,
-       because Overpass api chunked response contains string parts, not valid json-objects
-   */
+    Using reduce to mono and block method while handling getPublicTransportStops response,
+    instead of working with flux response,
+    because Overpass api chunked response contains string parts, not valid json-objects
+*/
 @Component
 @Slf4j
 @AllArgsConstructor

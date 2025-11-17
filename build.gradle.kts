@@ -26,36 +26,30 @@ repositories {
 }
 
 dependencies {
+    annotationProcessor("org.projectlombok:lombok")
+
     implementation("ch.qos.logback:logback-classic")
     implementation("org.postgresql:postgresql")
-    runtimeOnly("org.flywaydb:flyway-database-postgresql")
     implementation("org.flywaydb:flyway-core")
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
     implementation("com.google.code.gson:gson")
     implementation("com.google.code.findbugs:jsr305")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
-//    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
     implementation("com.google.guava:guava")
     implementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    compileOnly("org.projectlombok:lombok")
+
+    runtimeOnly("org.flywaydb:flyway-database-postgresql")
 }
 
 val guava: String by project
-//    val testcontainersBom: String by project
-//    val protobufBom: String by project
-//    val jmh: String by project
-//    val jetty: String by project
-    val reflections: String by project
-//    val freemarker: String by project
-//    val bootstrap: String by project
+val reflections: String by project
 val springDocOpenapiUi: String by project
 val jsr305: String by project
-//    val grpc: String by project
-
 val r2dbcPostgresql: String by project
 
 apply(plugin = "io.spring.dependency-management")
@@ -63,29 +57,11 @@ dependencyManagement {
     dependencies {
         imports {
             mavenBom(BOM_COORDINATES)
-//                mavenBom("org.testcontainers:testcontainers-bom:$testcontainersBom")
-//                mavenBom("com.google.protobuf:protobuf-bom:$protobufBom")
         }
         dependency("com.google.guava:guava:$guava")
-//            dependency("org.openjdk.jmh:jmh-core:$jmh")
-//            dependency("org.openjdk.jmh:jmh-generator-annprocess:$jmh")
-//            dependency("org.eclipse.jetty.ee10:jetty-ee10-servlet:$jetty")
-//            dependency("org.eclipse.jetty:jetty-server:$jetty")
-//            dependency("org.eclipse.jetty.ee10:jetty-ee10-webapp:$jetty")
-//            dependency("org.eclipse.jetty:jetty-security:$jetty")
-//            dependency("org.eclipse.jetty:jetty-http:$jetty")
-//            dependency("org.eclipse.jetty:jetty-io:$jetty")
-//            dependency("org.eclipse.jetty:jetty-util:$jetty")
-//            dependency("org.freemarker:freemarker:$freemarker")
-            dependency("org.reflections:reflections:$reflections")
+        dependency("org.reflections:reflections:$reflections")
         dependency("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocOpenapiUi")
         dependency("com.google.code.findbugs:jsr305:$jsr305")
-
-//            dependency("io.grpc:grpc-protobuf:$grpc")
-//            dependency("io.grpc:grpc-stub:$grpc")
-//            dependency("io.grpc:grpc-netty:$grpc")
-
-//        dependency("io.r2dbc:r2dbc-postgresql:$r2dbcPostgresql")
     }
 }
 
