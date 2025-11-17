@@ -1,11 +1,14 @@
 package ru.elistratov.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.elistratov.converter.RouteUrlConverter;
 import ru.elistratov.converter.UrlConverter;
@@ -16,6 +19,7 @@ import ru.elistratov.service.DBServiceRoute;
 
 @RestController
 @RequestMapping("${rest.api.prefix}${rest.api.version}")
+@Validated
 public class RouteRestController {
     private final UrlConverter<Route> urlConverter = new RouteUrlConverter();
     private final DBServiceRoute dbServiceRoute;
@@ -26,7 +30,7 @@ public class RouteRestController {
 
     @Operation(summary = "Get route url by id")
     @GetMapping("/route/{id}/url")
-    public URL getRouteUrlById(@PathVariable(name = "id") long id) {
+    public URL getRouteUrlById(@PathVariable(name = "id") @Min(0) long id) {
         var result = dbServiceRoute.getRoute(id);
         var route = result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
         return urlConverter.fromObjectToUrl(route);
@@ -34,26 +38,26 @@ public class RouteRestController {
 
     @Operation(summary = "Get route by id")
     @GetMapping("/route/{id}")
-    public Route getRouteById(@PathVariable(name = "id") long id) {
+    public Route getRouteById(@PathVariable(name = "id") @Min(0) long id) {
         var result = dbServiceRoute.getRoute(id);
         return result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
     }
 
     @Operation(summary = "Create/update route")
     @PostMapping("/route")
-    public Route saveRoute(@RequestBody Route route) {
+    public Route saveRoute(@RequestBody @Valid Route route) {
         return dbServiceRoute.saveRoute(route);
     }
 
     @Operation(summary = "Filter routes by params")
     @GetMapping("/route")
     public List<Route> getFilteredRoutes(
-            @RequestParam(name = "min-length", required = false) Float minLength,
-            @RequestParam(name = "max-length", required = false) Float maxLength,
-            @RequestParam(name = "min-ascent", required = false) Float minAscent,
-            @RequestParam(name = "max-ascent", required = false) Float maxAscent,
-            @RequestParam(name = "min-descent", required = false) Float minDescent,
-            @RequestParam(name = "max-descent", required = false) Float maxDescent) {
+            @RequestParam(name = "min-length", required = false) @Min(0) Float minLength,
+            @RequestParam(name = "max-length", required = false) @Min(0) Float maxLength,
+            @RequestParam(name = "min-ascent", required = false) @Min(0) Float minAscent,
+            @RequestParam(name = "max-ascent", required = false) @Min(0) Float maxAscent,
+            @RequestParam(name = "min-descent", required = false) @Min(0) Float minDescent,
+            @RequestParam(name = "max-descent", required = false) @Min(0) Float maxDescent) {
         return dbServiceRoute.getFilteredRoutes(minLength, maxLength, minAscent, maxAscent, minDescent, maxDescent);
     }
 
