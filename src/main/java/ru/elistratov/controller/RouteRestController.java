@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
 import ru.elistratov.converter.RouteUrlConverter;
@@ -26,10 +25,10 @@ public class RouteRestController {
 
     @Operation(summary = "Get route url by id")
     @GetMapping("/route/{id}/url")
-    public URL getRouteUrlById(@PathVariable(name = "id") long id) {
+    public String getRouteUrlById(@PathVariable(name = "id") long id) {
         var result = dbServiceRoute.getRoute(id);
         var route = result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
-        return urlConverter.fromObjectToUrl(route);
+        return urlConverter.fromObjectToUrl(route).toString();
     }
 
     @Operation(summary = "Get route by id")
