@@ -29,7 +29,7 @@ public class RouteRestController {
 
     @Operation(summary = "Get route url by id")
     @GetMapping("/route/{id}/url")
-    public URL getRouteUrlById(@PathVariable(name = "id") @Min(0) long id) {
+    public String getRouteUrlById(@PathVariable(name = "id") @Min(0) long id) {
         var result = dbServiceRoute.getRoute(id);
         var route = result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
         return urlConverter.fromObjectToUrl(route).toString();
