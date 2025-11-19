@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Min;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ public class RouteRestController {
     public URL getRouteUrlById(@PathVariable(name = "id") @Min(0) long id) {
         var result = dbServiceRoute.getRoute(id);
         var route = result.orElseThrow(() -> new RouteNotFoundException("Route not found"));
-        return urlConverter.fromObjectToUrl(route);
+        return urlConverter.fromObjectToUrl(route).toString();
     }
 
     @Operation(summary = "Get route by id")
