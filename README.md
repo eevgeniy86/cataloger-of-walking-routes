@@ -9,20 +9,21 @@ On "release" I would like to see a service that could potentially be deployed on
 
 I realize that, at least in its current form, the project can hardly be of practical interest to anyone but me, but nevertheless, I would be grateful for any constructive comments and suggestions.
 
+In its initial form, the service provides a rest api for interacting with it, in the future I would like to make a simple web interface.
+
 ## Description
 Service working with users walking routes. The main functionality of the service is assumed to be as follows:
 1. Saving of the user route plan (a sequence of points on the map) built in one of the popular public mapping services (google.Maps, yandex.Maps, 2gis, etc.) by transferring its hyperlink
 2. Automatic calculation and saving of the main parameters of the transmitted route, which are important for the user's choice. The calculation uses data from various open-source mapping services:
 - the total length of the route - according to the data from Open Source Routing Machine (OSRM) service (implementations jawg.io )
-- iformation about public transport stops and their type near the route endpoints - according to the data from OpenStreetMaps (OSM) service
+- information about public transport stops and their type near the route endpoints - according to the data from OpenStreetMaps (OSM) service
 - the distance between route endpoints and nearest public transport stations, distance between route endpoints (to understand whether this route can be considered a ring) - according to OSRM data
 - total height of ascent and descent on the route - according to OSRM data
 - regions through which the route passes (only an idea so far)
 - etc.
 3. Providing to the user a list of suitable routes, satisfying the filtering parameters he set
-4. Constructing and providing to the user hiperlink on mapping service (google.Maps, yandex.Maps, 2gis, etc.) for the requested route  
-5. Functioning of the service as a social network for walkers - the possibility of user registration and authorization, route exchenge, ratings and comments (plans for the distant future)
-In its initial form, the service provides a rest api for interacting with it, in the future I would like to make a simple web interface.
+4. Constructing and providing to the user hyperlink on mapping service (google.Maps, yandex.Maps, 2gis, etc.) for the requested route  
+5. Functioning of the service as a social network for walkers - the possibility of user registration and authorization, route exchange, ratings and comments (plans for the distant future)
 
 ## Done now
 
@@ -48,7 +49,7 @@ In its initial form, the service provides a rest api for interacting with it, in
 9. etc.  
 
 ## Specification (actual)
-### DB scheme
+### DB schema
 ![DB scheme](https://github.com/eevgeniy86/cataloger-of-walking-routes/blob/main/png/cataloger-of-walking-routes%20DB.png)
 
 [Source](https://app.diagrams.net/#G1bQZYkkVOpQfT3XxWXYR6dxSE6pfxUY9s#%7B"pageId"%3A"z3W7p9jmMmL0QTRQeyUE"%7D)
@@ -75,8 +76,9 @@ In its initial form, the service provides a rest api for interacting with it, in
 
 **relations**
 
-Not very useful api at the moment, using for debug, will be removed or refactored in the future.
+Not very useful api at the moment, used for debugging, will be removed or refactored in the future.
 
 - GET */route/{id}/relation* - get relations for the route by route id
+
 
 
