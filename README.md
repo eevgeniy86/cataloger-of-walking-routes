@@ -36,7 +36,7 @@ In its initial form, the service provides a rest api for interacting with it, in
 
 1. Scheduled calculation of total ascent and descent height on the route - according to OSRM data
 2. Scheduled getting of distances from route endpoints and public transport stops
-3. Maintaining of different mapping services urls (google, 2gis, etc.)
+3. Maintaining for different mapping services urls (google, 2gis, etc.)
 4. Refactoring rest api to full functionality
 5. More integration and unit tests for all the functionality
 6. Global code refactoring
@@ -78,4 +78,5 @@ In its initial form, the service provides a rest api for interacting with it, in
 Not very useful api at the moment, using for debug, will be removed or refactored in the future.
 
 - GET */route/{id}/relation* - get relations for the route by route id
+
 
