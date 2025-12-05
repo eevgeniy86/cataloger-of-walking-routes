@@ -3,9 +3,9 @@
 ## Introduction
 This is my first java/SpringBoot training project. The creation of this project does not set any financial goals and does not offer innovative solutions to existing technical problems. My primary goal when working on this project is to gain practical experience in java and learn more about this programming language and related libraries and frameworks.
 
-Nevertheless, this project has a defined scope of the desired functionality, which I try to adhere to. During my work, I maintain a backlog and documentation of the solutions being developed. Below is a description of the project and its current status, as well as plans for further development.
+Nevertheless, here is the scope of desired functionality, which I try to adhere to. During my work, I maintain a backlog and documentation, trying to fix the developed functionality and future plans.
 
-On release I would like to see a service that could potentially be deployed on a server and hosting for using it over the Internet.
+On "release" I would like to see a service that could potentially be deployed on a server and hosting for using it over the Internet.
 
 I realize that, at least in its current form, the project can hardly be of practical interest to anyone but me, but nevertheless, I would be grateful for any constructive comments and suggestions.
 
@@ -23,6 +23,29 @@ Service working with users walking routes. The main functionality of the service
 4. Constructing and providing to the user hiperlink on mapping service (google.Maps, yandex.Maps, 2gis, etc.) for the requested route  
 5. Functioning of the service as a social network for walkers - the possibility of user registration and authorization, route exchenge, ratings and comments (plans for the distant future)
 In its initial form, the service provides a rest api for interacting with it, in the future I would like to make a simple web interface.
+
+## Done now
+
+1. Saving of route from url (only yandex) via rest api
+2. Scheduled calculation of route length by data from OSRM
+3. Scheduled getting nearest to route endpoints public transport stops
+4. Rest api for routes
+5. Integrational tests for routes (only positive scenarios)
+
+## Future plans
+
+1. Scheduled calculation of total ascent and descent height on the route - according to OSRM data
+2. Scheduled getting of distances from route endpoints and public transport stops
+3. Maintaining of different mapping services urls (google, 2gis, etc.)
+4. Refactoring rest api to full functionality
+5. More integration and unit tests for all the functionality
+6. Global code refactoring
+7. Multiple users functionality:
+   - Authorization and roles
+   - User profiles
+   - Commenting, ratings, compilations of routes
+8. Web-interfaces
+9. etc.  
 
 ## Specification (actual)
 ### DB scheme
@@ -52,8 +75,7 @@ In its initial form, the service provides a rest api for interacting with it, in
 
 **relations**
 
-Not very useful api at the moment, using for debug, will be removed or refactored in the future
+Not very useful api at the moment, using for debug, will be removed or refactored in the future.
 
 - GET */route/{id}/relation* - get relations for the route by route id
 
-### Done now
