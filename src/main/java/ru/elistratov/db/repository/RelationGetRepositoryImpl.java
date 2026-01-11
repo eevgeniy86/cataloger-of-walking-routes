@@ -8,15 +8,15 @@ import org.springframework.stereotype.Repository;
 import ru.elistratov.model.domain.Relation;
 
 /*
-Different repository for select for the reason of getting consistent relation-objects with all inheritors
-TODO: Custom repository implementations for all entities
+Get relation with all related entities (station, point)
  */
 @Repository
 @AllArgsConstructor
-public class RelationGetRepository {
+public class RelationGetRepositoryImpl implements RelationGetRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
+    @Override
     public Iterable<Relation> getByRouteId(Long routeId) {
         String query = "select "
                 + "r.id as id, r.route_id as route_id, r.type as type, r.distance as distance, "

@@ -15,10 +15,6 @@ public interface RouteRepository extends Repository<Route, Long> {
             + "returning id, name, description, waypoints_number, length, ascent, descent, relations_processing_status")
     Route updateStatus(@Param("id") Long id, @Param("status") RelationsProcessingStatus status);
 
-    @Query("update route set length = :length " + "where id = :id "
-            + "returning id, name, description, waypoints_number, length, ascent, descent, relations_processing_status")
-    Route updateLength(@Param("id") Long id, @Param("length") float length);
-
     Optional<Route> findById(Long id);
 
     @Query(
@@ -40,7 +36,7 @@ public interface RouteRepository extends Repository<Route, Long> {
 
     @Query(
             "select r.id as id, r.name as name, r.description as description, r.waypoints_number as waypoints_number, r.length as length, r.ascent as ascent, r.descent as descent, r.relations_processing_status as relations_processing_status "
-                    + "from route r where r.ascent is null")
+                    + "from route r where r.ascent is null AND r.descent is null")
     Iterable<Route> filterWithNoElevations();
 
     @Query(

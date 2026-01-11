@@ -12,7 +12,7 @@ import ru.elistratov.model.domain.Station;
 import ru.elistratov.model.domain.StationType;
 
 @Component
-public class OsmJsonMapper {
+public class OsmJsonMapper implements JsonToStationsMapper {
 
     private static final String busStopKey = "highway";
     private static final String busStopValue = "bus_stop";

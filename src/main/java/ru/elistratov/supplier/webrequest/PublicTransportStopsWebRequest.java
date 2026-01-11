@@ -1,7 +1,7 @@
-package ru.elistratov.webclient;
+package ru.elistratov.webrequest;
 
 import reactor.core.publisher.Flux;
 
-public interface OsmWebClient {
+public interface PublicTransportStopsWebRequest {
     Flux<String> getPublicTransportStops(String coordinates);
 }

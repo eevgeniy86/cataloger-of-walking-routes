@@ -5,7 +5,9 @@ import ru.elistratov.model.domain.Relation;
 
 public interface DBServiceRelation {
 
-    Relation saveRelation(Relation relation);
+    Relation saveRelationWithExistingStation(Relation relation);
 
     List<Relation> getRelationsByRouteId(Long routeId);
+
+    List<Relation> getAllRelations();
 }

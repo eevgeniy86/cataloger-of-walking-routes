@@ -1,7 +1,7 @@
-package ru.elistratov.webclient;
+package ru.elistratov.webrequest;
 
 import reactor.core.publisher.Mono;
 
-public interface OsrmWebClient {
+public interface RouteWebRequest {
     Mono<String> getRoute(String coordinates);
 }
