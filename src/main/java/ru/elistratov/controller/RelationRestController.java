@@ -1,14 +1,13 @@
 package ru.elistratov.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
-
 import jakarta.validation.constraints.Min;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.elistratov.db.service.DBServiceRelation;
 import ru.elistratov.model.domain.Relation;
-import ru.elistratov.service.DBServiceRelation;
 
 @RestController
 @RequestMapping("${rest.api.prefix}${rest.api.version}")

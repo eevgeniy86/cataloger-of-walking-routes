@@ -1,4 +1,4 @@
-package ru.elistratov.supplier.jsommapper;
+package ru.elistratov.supplier.jsonmapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;

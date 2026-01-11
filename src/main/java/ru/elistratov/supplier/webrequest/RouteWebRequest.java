@@ -1,4 +1,4 @@
-package ru.elistratov.webrequest;
+package ru.elistratov.supplier.webrequest;
 
 import reactor.core.publisher.Mono;
 

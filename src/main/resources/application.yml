@@ -8,6 +8,16 @@ spring:
   flyway:
     enabled: true
   profiles:
+# Format:
+#    osm:
+#      api:
+#        url: "https://overpass-api.de/api/interpreter"
+#    osrm:
+#      api:
+#        url: "https://api.jawg.io"
+#        token: "***"
+#        route-uri: "/routing/route/v1/walk"
+#        elevations-uri: "/elevations"
     include: 'api-clients'
 
 server:

@@ -1,7 +1,8 @@
 package ru.elistratov.supplier.jsonmapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.Deque;
 
-public interface JsonToDistanceMapper {
-    float getDistanceFromJson(String jsonStr) throws JsonProcessingException;
+public interface JsonToDistancesMapper {
+    Deque<Float> getDistancesFromJson(String jsonStr) throws JsonProcessingException;
 }

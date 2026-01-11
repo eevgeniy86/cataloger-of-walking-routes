@@ -1,4 +1,4 @@
-package ru.elistratov.service;
+package ru.elistratov.db.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +19,10 @@ public interface DBServiceRoute {
     List<Route> getRoutesByRelationsProcessingStatus(RelationsProcessingStatus status);
 
     Route updateRouteWithStatus(long routeId, RelationsProcessingStatus status);
+
+    List<Route> getRoutesWithoutElevations();
+
+    Route updateRouteWithSlopes(long routeId, float ascent, float descent);
+
+    Route updateRouteWithLength(long routeId, float length);
 }

@@ -1,4 +1,4 @@
-package ru.elistratov.service;
+package ru.elistratov.db.service;
 
 import java.util.Set;
 import ru.elistratov.model.domain.Station;
@@ -7,5 +7,5 @@ public interface DBServiceStation {
 
     Set<Long> getAllIds();
 
-    void saveStation(Station station);
+    Station saveStation(Station station);
 }

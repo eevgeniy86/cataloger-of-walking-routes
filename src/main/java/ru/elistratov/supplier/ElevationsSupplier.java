@@ -14,27 +14,28 @@ import ru.elistratov.supplier.handler.RouteHandler;
 @Component
 @EnableScheduling
 @Slf4j
-public class DistancesSupplier {
+public class ElevationsSupplier {
     private final DBServiceRoute dbService;
     private final RouteHandler routeHandler;
 
-    public DistancesSupplier(DBServiceRoute dbService, @Qualifier("osrm-distances-handler") RouteHandler routeHandler) {
+    public ElevationsSupplier(
+            DBServiceRoute dbService, @Qualifier("osrm-elevations-handler") RouteHandler routeHandler) {
         this.dbService = dbService;
         this.routeHandler = routeHandler;
     }
 
-    @Scheduled(fixedDelay = 300_000)
+    @Scheduled(initialDelay = 30_000, fixedDelay = 300_000)
     @Async
     public void start() {
-        List<Route> unprocessedRoutes = dbService.getRoutesWithNoDistance();
+        List<Route> unprocessedRoutes = dbService.getRoutesWithoutElevations();
         log.atInfo()
-                .setMessage("Get routes with no distances: {}")
+                .setMessage("Get routes with no elevations: {}")
                 .addArgument(unprocessedRoutes)
                 .log();
         for (Route route : unprocessedRoutes) {
             routeHandler.handleRoute(route);
             log.atInfo()
-                    .setMessage("Route sent for distance handling: {}")
+                    .setMessage("Route sent for elevations handling: {}")
                     .addArgument(route)
                     .log();
         }

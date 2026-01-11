@@ -1,4 +1,4 @@
-package ru.elistratov.webrequest;
+package ru.elistratov.supplier.webrequest;
 
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
@@ -46,8 +46,11 @@ public class OsmWebRequest implements PublicTransportStopsWebRequest {
                 .bodyToFlux(String.class)
                 .timeout(Duration.ofMillis(TIMEOUT))
                 .doOnError(e -> log.atError().setMessage(e.getMessage()).log())
-                .retryWhen(Retry.fixedDelay(5, Duration.ofMillis(1000)))
-                .doOnComplete(() -> log.atInfo().setMessage("Got success response for coordinates: {}").addArgument(coordinates).log())
+                .retryWhen(Retry.fixedDelay(5, Duration.ofMillis(3000)))
+                .doOnComplete(() -> log.atInfo()
+                        .setMessage("Got success response for coordinates: {}")
+                        .addArgument(coordinates)
+                        .log())
                 .transformDeferred(RateLimiterOperator.of(osmRateLimiter));
     }
 }

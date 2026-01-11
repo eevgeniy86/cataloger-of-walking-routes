@@ -1,7 +1,7 @@
-package ru.elistratov.supplier;
+package ru.elistratov.supplier.saver;
 
-import ru.elistratov.model.domain.Route;
 import java.util.Deque;
+import ru.elistratov.model.domain.Route;
 
 public interface DistancesSaver {
     void saveResultToRoute(Deque<Float> distances, Route route);

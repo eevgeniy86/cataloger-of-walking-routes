@@ -2,6 +2,7 @@ package ru.elistratov.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
@@ -62,5 +63,18 @@ public class Station implements Persistable<Long> {
     @Override
     public String toString() {
         return "{id=" + osmId + ";type=" + type + ";name=" + name + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Station station = (Station) o;
+        return Objects.equals(osmId, station.osmId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(osmId);
     }
 }

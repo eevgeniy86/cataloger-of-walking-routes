@@ -1,4 +1,4 @@
-package ru.elistratov.supplier.jsommapper;
+package ru.elistratov.supplier.jsonmapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,12 +14,12 @@ import ru.elistratov.model.domain.StationType;
 @Component
 public class OsmJsonMapper implements JsonToStationsMapper {
 
-    private static final String busStopKey = "highway";
-    private static final String busStopValue = "bus_stop";
-    private static final String railStopKey = "railway";
-    private static final String railStopValue = "station";
-    private static final String subwayKey = "subway";
-    private static final String trainKey = "train";
+    private static final String BUS_STOP_KEY = "highway";
+    private static final String BUS_STOP_VALUE = "bus_stop";
+    private static final String RAIL_STOP_KEY = "railway";
+    private static final String RAIL_STOP_VALUE = "station";
+    private static final String SUBWAY_KEY = "subway";
+    private static final String TRAIN_KEY = "train";
 
     public List<Station> getStationsFromJson(String jsonStr) throws JsonProcessingException {
         List<Station> result = new ArrayList<>();
@@ -28,17 +28,18 @@ public class OsmJsonMapper implements JsonToStationsMapper {
         for (Iterator<JsonNode> it = node.get("elements").elements(); it.hasNext(); ) {
             JsonNode element = it.next();
             Long id = element.get("id").asLong();
-            double latitude = element.get("lat").asDouble();
-            double longitude = element.get("lon").asDouble();
+            float latitude = (float) element.get("lat").asDouble();
+            float longitude = (float) element.get("lon").asDouble();
             JsonNode tags = element.get("tags");
             String name = tags.get("name").asText();
             StationType stationType = null;
-            if (tags.has(busStopKey) && tags.get(busStopKey).asText().equals(busStopValue)) {
+            if (tags.has(BUS_STOP_KEY) && tags.get(BUS_STOP_KEY).asText().equals(BUS_STOP_VALUE)) {
                 stationType = StationType.BUS;
-            } else if (tags.has(railStopKey) && tags.get(railStopKey).asText().equals(railStopValue)) {
-                if (tags.has(subwayKey) && tags.get(subwayKey).asBoolean()) {
+            } else if (tags.has(RAIL_STOP_KEY)
+                    && tags.get(RAIL_STOP_KEY).asText().equals(RAIL_STOP_VALUE)) {
+                if (tags.has(SUBWAY_KEY) && tags.get(SUBWAY_KEY).asBoolean()) {
                     stationType = StationType.SUBWAY;
-                } else if (tags.has(trainKey) && tags.get(trainKey).asBoolean()) {
+                } else if (tags.has(TRAIN_KEY) && tags.get(TRAIN_KEY).asBoolean()) {
                     stationType = StationType.TRAIN;
                 }
             }
@@ -46,7 +47,6 @@ public class OsmJsonMapper implements JsonToStationsMapper {
                 result.add(new Station(id, name, stationType, new Point(null, latitude, longitude)));
             }
         }
-        System.out.println(result);
         return result;
     }
 }

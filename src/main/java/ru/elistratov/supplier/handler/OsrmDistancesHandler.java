@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -18,13 +17,23 @@ import ru.elistratov.supplier.webrequest.RouteWebRequest;
 
 @Component
 @Slf4j
-@AllArgsConstructor
 @Qualifier("osrm-distances-handler")
 public class OsrmDistancesHandler implements RouteHandler {
     private final PointsToCoordinatesConverter converter;
     private final JsonToDistancesMapper jsonMapper;
     private final RouteWebRequest request;
     private final DistancesSaver saver;
+
+    public OsrmDistancesHandler(
+            @Qualifier("points-to-osrm-route-coordinates-converter") PointsToCoordinatesConverter converter,
+            JsonToDistancesMapper jsonMapper,
+            RouteWebRequest request,
+            DistancesSaver saver) {
+        this.converter = converter;
+        this.jsonMapper = jsonMapper;
+        this.request = request;
+        this.saver = saver;
+    }
 
     @Override
     public void handleRoute(Route route) {
@@ -45,17 +54,4 @@ public class OsrmDistancesHandler implements RouteHandler {
             log.atError().setMessage(jpe.getMessage()).log();
         }
     }
-
-    //    public Slopes getSlopesForRoute(Route route) throws WebClientException, JsonProcessingException {
-    //        List<Point> points = route.waypointsList().stream()
-    //                .sorted(Comparator.comparingInt(Waypoint::index))
-    //                .map(Waypoint::point)
-    //                .toList();
-    //        String coordinates = converter.convertPointsToCoordinates(points);
-    //        String jsonStr = httpClient
-    //                .getElevations(coordinates)
-    //                .reduce("", (a, b) -> a + b)
-    //                .block();
-    //        return osrmJsonMapper.getSlopesFromJson(jsonStr);
-    //    }
 }
