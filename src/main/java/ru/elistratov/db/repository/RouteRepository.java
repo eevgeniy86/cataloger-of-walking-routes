@@ -1,4 +1,4 @@
-package ru.elistratov.repository;
+package ru.elistratov.db.repository;
 
 import java.util.Optional;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -11,11 +11,22 @@ public interface RouteRepository extends Repository<Route, Long> {
 
     Route save(Route route);
 
-    @Query("update route set relations_processing_status = :status " + "where id = :id "
+    @Query("update route set relations_processing_status = :status "
+            + "where id = :id "
             + "returning id, name, description, waypoints_number, length, ascent, descent, relations_processing_status")
-    Route updateStatus(@Param("id") Long id, @Param("status") RelationsProcessingStatus status);
+    Route updateStatus(@Param("id") long id, @Param("status") RelationsProcessingStatus status);
 
-    Optional<Route> findById(Long id);
+    @Query("update route set ascent = :ascent, descent = :descent "
+            + "where id = :id "
+            + "returning id, name, description, waypoints_number, length, ascent, descent, relations_processing_status")
+    Route updateSlopes(@Param("id") long id, @Param("ascent") float ascent, @Param("descent") float descent);
+
+    @Query("update route set length = :length "
+            + "where id = :id "
+            + "returning id, name, description, waypoints_number, length, ascent, descent, relations_processing_status")
+    Route updateLength(@Param("id") long id, @Param("length") float length);
+
+    Optional<Route> findById(long id);
 
     @Query(
             "select r.id as id, r.name as name, r.description as description, r.waypoints_number as waypoints_number, r.length as length, r.ascent as ascent, r.descent as descent, r.relations_processing_status as relations_processing_status "
@@ -36,16 +47,16 @@ public interface RouteRepository extends Repository<Route, Long> {
 
     @Query(
             "select r.id as id, r.name as name, r.description as description, r.waypoints_number as waypoints_number, r.length as length, r.ascent as ascent, r.descent as descent, r.relations_processing_status as relations_processing_status "
-                    + "from route r where r.ascent is null AND r.descent is null")
-    Iterable<Route> filterWithNoElevations();
+                    + "from route r where r.ascent is null AND r.descent is null AND r.length is not null")
+    Iterable<Route> getWithNoElevations();
 
     @Query(
             "select r.id as id, r.name as name, r.description as description, r.waypoints_number as waypoints_number, r.length as length, r.ascent as ascent, r.descent as descent, r.relations_processing_status as relations_processing_status "
                     + "from route r where r.length is null")
-    Iterable<Route> filterWithNoDistance();
+    Iterable<Route> getWithNoDistance();
 
     @Query(
             "select r.id as id, r.name as name, r.description as description, r.waypoints_number as waypoints_number, r.length as length, r.ascent as ascent, r.descent as descent, r.relations_processing_status as relations_processing_status "
                     + "from route r where lower(r.relations_processing_status) = lower(:status)")
-    Iterable<Route> filterByRelationsProcessingStatus(@Param("status") String status);
+    Iterable<Route> getByRelationsProcessingStatus(@Param("status") String status);
 }

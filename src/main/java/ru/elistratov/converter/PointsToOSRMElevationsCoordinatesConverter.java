@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 import ru.elistratov.model.domain.Point;
 
 @Component
-@Qualifier("points-to-osrm-route-coordinates-converter")
-public class PointsToOSRMRouteCoordinatesConverter implements PointsToCoordinatesConverter {
+@Qualifier("points-to-osrm-elevations-coordinates-converter")
+public class PointsToOSRMElevationsCoordinatesConverter implements PointsToCoordinatesConverter {
 
-    // 37.696012,55.620324;37.705061,55.623574 - long,lat;long,lat
+    // 37.696012,55.620324|37.705061,55.623574 - long,lat|long,lat
     @Override
     public String convertPointsToCoordinates(List<Point> points) {
-        return points.stream().map(p -> p.longitude() + "," + p.latitude()).collect(Collectors.joining(";"));
+        return points.stream().map(p -> p.longitude() + "," + p.latitude()).collect(Collectors.joining("|"));
     }
 }

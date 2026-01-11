@@ -6,10 +6,10 @@ import name.remal.gradle_plugins.sonarlint.SonarLintExtension
 plugins {
     id("java")
     idea
-    id("io.spring.dependency-management")
+    id("io.spring.dependency-management") apply true
     id("org.springframework.boot") apply true
     id("com.diffplug.spotless") apply true
-    id("fr.brouillard.oss.gradle.jgitver")
+    id("fr.brouillard.oss.gradle.jgitver") apply true
     id("name.remal.sonarlint") apply true
 }
 
@@ -38,6 +38,8 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("io.github.resilience4j:resilience4j-reactor")
+    implementation("io.github.resilience4j:resilience4j-ratelimiter")
 
     compileOnly("org.projectlombok:lombok")
 
@@ -49,16 +51,22 @@ dependencies {
     testImplementation("org.testcontainers:postgresql")
     testImplementation("com.google.code.gson:gson")
 
-
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
 }
 
 val guava: String by project
 val reflections: String by project
 val springDocOpenapiUi: String by project
 val jsr305: String by project
-val r2dbcPostgresql: String by project
+val springframeworkBoot: String by project
+val flywayCore: String by project
+val lombok: String by project
+val postgresql: String by project
+val testcontainersPostgresql: String by project
+val gson: String by project
+val resilience4j: String by project
+
+
 
 apply(plugin = "io.spring.dependency-management")
 dependencyManagement {
@@ -66,10 +74,28 @@ dependencyManagement {
         imports {
             mavenBom(BOM_COORDINATES)
         }
+
+
         dependency("com.google.guava:guava:$guava")
         dependency("org.reflections:reflections:$reflections")
         dependency("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocOpenapiUi")
         dependency("com.google.code.findbugs:jsr305:$jsr305")
+        dependency("org.springframework.boot:spring-boot-starter-data-jdbc:$springframeworkBoot")
+        dependency("org.springframework.boot:spring-boot-starter-web:$springframeworkBoot")
+        dependency("org.springframework.boot:spring-boot-starter-webflux:$springframeworkBoot")
+        dependency("org.springframework.boot:spring-boot-starter-validation:$springframeworkBoot")
+        dependency("org.springframework.boot:spring-boot-starter-test:$springframeworkBoot")
+        dependency("org.springframework.boot:spring-boot-testcontainers:$springframeworkBoot")
+        dependency("org.flywaydb:flyway-core:$flywayCore")
+        dependency("org.flywaydb:flyway-database-postgresql:$flywayCore")
+        dependency("org.projectlombok:lombok:$lombok")
+        dependency("org.postgresql:postgresql:$postgresql")
+        dependency("org.testcontainers:postgresql:$testcontainersPostgresql")
+        dependency("com.google.code.gson:gson:$gson")
+        dependency("io.github.resilience4j:resilience4j-reactor:$resilience4j")
+        dependency("io.github.resilience4j:resilience4j-ratelimiter:$resilience4j")
+
+
     }
 }
 

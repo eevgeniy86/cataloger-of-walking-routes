@@ -2,6 +2,6 @@ package ru.elistratov.supplier.handler;
 
 import ru.elistratov.model.domain.Route;
 
-public interface Handler {
+public interface RouteHandler {
     void handleRoute(Route route);
 }

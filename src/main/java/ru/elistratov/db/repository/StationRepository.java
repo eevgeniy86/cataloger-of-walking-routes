@@ -1,4 +1,4 @@
-package ru.elistratov.repository;
+package ru.elistratov.db.repository;
 
 import java.util.Set;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -9,5 +9,5 @@ public interface StationRepository extends Repository<Station, Long> {
     @Query("select s.osm_id as id from station s")
     Set<Long> getAllIds();
 
-    void save(Station station);
+    Station save(Station station);
 }

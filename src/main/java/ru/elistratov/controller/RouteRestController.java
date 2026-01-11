@@ -9,18 +9,18 @@ import java.net.URISyntaxException;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.elistratov.converter.RouteUrlConverter;
+import ru.elistratov.converter.RouteYandexUrlConverter;
 import ru.elistratov.converter.UrlConverter;
+import ru.elistratov.db.service.DBServiceRoute;
 import ru.elistratov.exception.IncorrectUrlException;
 import ru.elistratov.exception.RouteNotFoundException;
 import ru.elistratov.model.domain.Route;
-import ru.elistratov.service.DBServiceRoute;
 
 @RestController
 @RequestMapping("${rest.api.prefix}${rest.api.version}")
 @Validated
 public class RouteRestController {
-    private final UrlConverter<Route> urlConverter = new RouteUrlConverter();
+    private final UrlConverter<Route> urlConverter = new RouteYandexUrlConverter();
     private final DBServiceRoute dbServiceRoute;
 
     public RouteRestController(DBServiceRoute dbServiceRoute) {

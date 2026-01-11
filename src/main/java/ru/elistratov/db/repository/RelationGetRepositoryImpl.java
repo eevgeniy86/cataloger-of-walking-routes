@@ -1,4 +1,4 @@
-package ru.elistratov.repository;
+package ru.elistratov.db.repository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class RelationGetRepositoryImpl implements RelationGetRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
-    public Iterable<Relation> getByRouteId(Long routeId) {
+    public Iterable<Relation> getByRouteId(long routeId) {
         String query = "select "
                 + "r.id as id, r.route_id as route_id, r.type as type, r.distance as distance, "
                 + "s.osm_id as station_osm_id, s.name as station_name, s.type as station_type, "

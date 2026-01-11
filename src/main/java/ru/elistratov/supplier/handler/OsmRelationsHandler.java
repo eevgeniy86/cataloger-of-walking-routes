@@ -1,22 +1,23 @@
-package ru.elistratov.supplier.getter;
-
-import java.util.Comparator;
-import java.util.List;
+package ru.elistratov.supplier.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.Comparator;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.elistratov.converter.PointToCoordinatesConverter;
 import ru.elistratov.model.domain.*;
-import ru.elistratov.supplier.RelationsSaver;
 import ru.elistratov.supplier.jsonmapper.JsonToStationsMapper;
-import ru.elistratov.webrequest.OsmWebRequest;
+import ru.elistratov.supplier.saver.RelationsSaver;
+import ru.elistratov.supplier.webrequest.OsmWebRequest;
 
 @Component
 @Slf4j
 @AllArgsConstructor
-public class OsmRelationsHandler implements RelationsHandler {
+@Qualifier("osm-relations-handler")
+public class OsmRelationsHandler implements RouteHandler {
     private final OsmWebRequest request;
     private final PointToCoordinatesConverter converter;
     private final RelationsSaver saver;
@@ -48,5 +49,4 @@ public class OsmRelationsHandler implements RelationsHandler {
             log.atError().setMessage(jpe.getMessage()).log();
         }
     }
-
 }

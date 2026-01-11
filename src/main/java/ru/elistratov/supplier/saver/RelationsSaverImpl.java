@@ -1,22 +1,20 @@
-package ru.elistratov.supplier;
+package ru.elistratov.supplier.saver;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import ru.elistratov.db.service.DBServiceRelation;
+import ru.elistratov.db.service.DBServiceRoute;
+import ru.elistratov.db.service.DBServiceStation;
 import ru.elistratov.model.domain.*;
-import ru.elistratov.service.DBServiceRelation;
-import ru.elistratov.service.DBServiceRoute;
-import ru.elistratov.service.DBServiceStation;
 
 @Component
 @Slf4j
-public class OsmRelationsSaver implements RelationsSaver {
+public class RelationsSaverImpl implements RelationsSaver {
 
     private static final int RELATION_TYPES_COUNT = RelationType.values().length;
 
@@ -28,10 +26,7 @@ public class OsmRelationsSaver implements RelationsSaver {
     private final Set<Relation> existingRelations;
     private final Map<Long, Set<RelationType>> processedRouteIdsRelationsTypes = new ConcurrentSkipListMap<>();
 
-    public OsmRelationsSaver(
-            DBServiceRoute dbRoute,
-            DBServiceRelation dbRelation,
-            DBServiceStation dbStation) {
+    public RelationsSaverImpl(DBServiceRoute dbRoute, DBServiceRelation dbRelation, DBServiceStation dbStation) {
         this.dbRoute = dbRoute;
         this.dbRelation = dbRelation;
         this.dbStation = dbStation;
@@ -47,7 +42,17 @@ public class OsmRelationsSaver implements RelationsSaver {
         } else if (stations != null && !stations.isEmpty()) {
             List<Relation> relations = new ArrayList<>();
             for (Station s : stations) {
-                s.setIsNew(!existingStationIds.contains(s.getId()));
+                if (!existingStationIds.contains(s.getId())) {
+                    s.setIsNew(true);
+                    Station saved = dbStation.saveStation(s);
+                    if (saved != null) {
+                        existingStationIds.add(saved.getId());
+                        log.atInfo()
+                                .setMessage("Saved station: {}")
+                                .addArgument(saved)
+                                .log();
+                    }
+                }
                 relations.add(new Relation(null, routeId, type, null, s));
             }
             saveRelationsOfOneTypeForOneRoute(relations);
@@ -55,41 +60,27 @@ public class OsmRelationsSaver implements RelationsSaver {
         putRelationTypeForRouteId(routeId, type);
     }
 
-    @Transactional
     private void saveRelationsOfOneTypeForOneRoute(List<Relation> relations) {
         for (Relation relation : relations) {
-            Station station = relation.station();
-            if (station != null && existingStationIds.add(station.getId())) {
-                dbStation.saveStation(station);
-                log.atInfo()
-                        .setMessage("Saved new station: {} for relation: {}")
-                        .addArgument(station)
-                        .addArgument(relation)
-                        .log();
-            }
             if (!existingRelations.contains(relation)) {
-                dbRelation.saveRelationWithExistingStation(relation);
-                log.atInfo()
-                        .setMessage("Saved new relation: {}")
-                        .addArgument(relation)
-                        .log();
+                Relation saved = dbRelation.saveRelationWithExistingStation(relation);
+                if (saved != null) {
+                    existingRelations.add(saved);
+                    log.atInfo()
+                            .setMessage("Saved new relation: {}")
+                            .addArgument(saved)
+                            .log();
+                }
             }
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void putRelationTypeForRouteId(long routeId, RelationType type) {
-        Set<RelationType> relationTypes;
-        if (!processedRouteIdsRelationsTypes.containsKey(routeId)) {
-            relationTypes = new ConcurrentSkipListSet<>();
-            relationTypes.add(type);
-            processedRouteIdsRelationsTypes.put(routeId, relationTypes);
-        } else {
-            relationTypes = processedRouteIdsRelationsTypes.get(routeId);
-            relationTypes.add(type);
-        }
+        Set<RelationType> relationTypes =
+                processedRouteIdsRelationsTypes.computeIfAbsent(routeId, k -> new ConcurrentSkipListSet<>());
+        relationTypes.add(type);
         if (relationTypes.size() == RELATION_TYPES_COUNT) {
-            Route saved = dbRoute.updateRouteWithStatus(routeId, RelationsProcessingStatus.STATIONS_RECEIVED);
+            Route saved = dbRoute.updateRouteWithStatus(routeId, RelationsProcessingStatus.ADDED);
             log.atInfo()
                     .setMessage("Relations processed for route: {}")
                     .addArgument(saved)

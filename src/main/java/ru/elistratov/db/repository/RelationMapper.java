@@ -1,4 +1,4 @@
-package ru.elistratov.repository;
+package ru.elistratov.db.repository;
 
 import jakarta.annotation.Nonnull;
 import java.sql.ResultSet;
@@ -13,7 +13,7 @@ public class RelationMapper implements RowMapper<Relation> {
         Station station;
         if (rs.getString("station_type") != null) {
             Point point =
-                    new Point(rs.getLong("point_id"), rs.getDouble("point_latitude"), rs.getDouble("point_longitude"));
+                    new Point(rs.getLong("point_id"), rs.getFloat("point_latitude"), rs.getFloat("point_longitude"));
             StationType stationType = StationType.valueOf(rs.getString("station_type"));
             station =
                     new Station(rs.getLong("station_osm_id"), rs.getString("station_name"), stationType, point, false);

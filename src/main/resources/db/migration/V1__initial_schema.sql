@@ -34,6 +34,7 @@ create table waypoint
     index smallint not null,
     route_id bigint not null,
     comment varchar(1000),
+    distance_to_next numeric(8,1),
     foreign key (route_id) references route (id)
 );
 

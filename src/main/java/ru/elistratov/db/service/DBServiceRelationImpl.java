@@ -1,4 +1,4 @@
-package ru.elistratov.service;
+package ru.elistratov.db.service;
 
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.elistratov.db.repository.RelationRepository;
 import ru.elistratov.model.domain.Relation;
-import ru.elistratov.repository.RelationRepository;
 
 @Service
 @Slf4j
@@ -18,11 +18,7 @@ public class DBServiceRelationImpl implements DBServiceRelation {
     @Override
     @Transactional
     public Relation saveRelationWithExistingStation(Relation relation) {
-        Relation savedRelation = relationRepository.saveByParams(
-                relation.routeId(),
-                relation.type(),
-                relation.station() == null ? null : relation.station().getId(),
-                relation.distance());
+        Relation savedRelation = relationRepository.saveWithoutNested(relation);
         log.atInfo()
                 .setMessage("Saved relation by params: {}")
                 .addArgument(savedRelation)
@@ -31,7 +27,7 @@ public class DBServiceRelationImpl implements DBServiceRelation {
     }
 
     @Override
-    public List<Relation> getRelationsByRouteId(Long routeId) {
+    public List<Relation> getRelationsByRouteId(long routeId) {
         var result = Lists.newArrayList(relationRepository.getByRouteId(routeId));
         log.atInfo()
                 .setMessage("Get relation by route id: {}")

@@ -1,12 +1,13 @@
-package ru.elistratov.service;
+package ru.elistratov.db.service;
 
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.elistratov.db.repository.StationRepository;
 import ru.elistratov.model.domain.Station;
-import ru.elistratov.repository.StationRepository;
 
 @Service
 @Slf4j
@@ -24,8 +25,11 @@ public class DBServiceStationImpl implements DBServiceStation {
         return ids;
     }
 
-    public void saveStation(Station station) {
-        stationRepository.save(station);
-        log.atInfo().setMessage("Saved station: {}").addArgument(station).log();
+    @Override
+    @Transactional
+    public Station saveStation(Station station) {
+        Station saved = stationRepository.save(station);
+        log.atInfo().setMessage("Saved station: {}").addArgument(saved).log();
+        return saved;
     }
 }

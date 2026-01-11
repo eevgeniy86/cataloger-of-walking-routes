@@ -13,17 +13,17 @@ import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 @Configuration
 public class WebClientConfig {
-    public static final int timeout = 300_000;
+    public static final int TIMEOUT = 300_000;
 
     @Bean
     public WebClient webClient() {
 
         HttpClient client = HttpClient.create()
                 .wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
                 .doOnConnected(connection -> connection
-                        .addHandlerLast(new ReadTimeoutHandler(timeout, TimeUnit.MILLISECONDS))
-                        .addHandlerLast(new ReadTimeoutHandler(timeout, TimeUnit.MILLISECONDS)));
+                        .addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS))
+                        .addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS)));
 
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(client))
