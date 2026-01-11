@@ -31,24 +31,25 @@ The service works with users walking routes. The main functionality of the servi
 3. Scheduled retrieval of public transport stops nearest to route endpoints 
 4. Rest api for routes
 5. Integrational tests for routes (positive scenarios only)
+6. Refactoring for all the functionality
+7. Scheduled calculation of the total ascent and descent height on the route - according to OSRM data
+
 
 ## Future plans
-1. Scheduled calculation of the total ascent and descent height on the route - according to OSRM data
-2. Scheduled retrieval of distances from route endpoints and public transport stops
-3. Maintaining urls for different mapping services (google, 2gis, etc.)
-4. Refactoring the rest api to full functionality
-5. More integration and unit tests for all functionality
-6. Global code refactoring
-7. Multiple users functionality:
+1. Scheduled retrieval of distances from route endpoints and public transport stops
+2. Maintaining urls for different mapping services (google, 2gis, etc.)
+3. Refactoring the rest api to full functionality
+4. More integration and unit tests for all functionality
+5. Multiple users functionality:
 - Authorization and roles
 - User profiles
 - Commenting, ratings, compilations of routes
-8. Web-interfaces
-9. etc.
+6. Web-interfaces
+7. etc.
 
 ## Specification (actual)
 ### DB schema
-![DB scheme](https://github.com/eevgeniy86/cataloger-of-walking-routes/blob/main/png/cataloger-of-walking-routes%20DB.png)
+![DB scheme](https://github.com/eevgeniy86/cataloger-of-walking-routes/blob/main/png/cataloger-of-walking-routes%20DB.drawio.png)
 
 [Source](https://app.diagrams.net/#G1bQZYkkVOpQfT3XxWXYR6dxSE6pfxUY9s#%7B"pageId"%3A"z3W7p9jmMmL0QTRQeyUE"%7D)
 
@@ -77,6 +78,7 @@ The service works with users walking routes. The main functionality of the servi
 Not very useful api at the moment, used for debugging, will be removed or refactored in the future.
 
 - GET */route/{id}/relation* - get relations for the route by route id
+
 
 
 
