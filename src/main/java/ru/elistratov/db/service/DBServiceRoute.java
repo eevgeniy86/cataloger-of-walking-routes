@@ -18,7 +18,5 @@ public interface DBServiceRoute {
 
     List<Route> getRoutesByRelationsProcessingStatus(RelationsProcessingStatus status);
 
-    Route updateRouteWithStatus(Route route, RelationsProcessingStatus status);
-
-    Route updateRouteWithLength(Route route, float length);
+    Route updateRouteWithStatus(long routeId, RelationsProcessingStatus status);
 }

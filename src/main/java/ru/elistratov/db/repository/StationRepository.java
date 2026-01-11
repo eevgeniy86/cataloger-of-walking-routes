@@ -9,5 +9,5 @@ public interface StationRepository extends Repository<Station, Long> {
     @Query("select s.osm_id as id from station s")
     Set<Long> getAllIds();
 
-    Station save(Station station);
+    void save(Station station);
 }

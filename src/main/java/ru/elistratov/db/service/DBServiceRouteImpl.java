@@ -28,22 +28,12 @@ public class DBServiceRouteImpl implements DBServiceRoute {
         return saved;
     }
 
-    public Route updateRouteWithStatus(Route route, RelationsProcessingStatus status) {
-        var updated = routeRepository.updateStatus(route.id(), status);
+    public Route updateRouteWithStatus(long routeId, RelationsProcessingStatus status) {
+        var updated = routeRepository.updateStatus(routeId, status);
         logger.atInfo()
                 .setMessage("Updated route: {}, with status: {}")
                 .addArgument(updated)
                 .addArgument(status)
-                .log();
-        return updated;
-    }
-
-    public Route updateRouteWithLength(Route route, float length) {
-        var updated = routeRepository.updateLength(route.id(), length);
-        logger.atInfo()
-                .setMessage("Updated route: {}, with length: {}")
-                .addArgument(updated)
-                .addArgument(length)
                 .log();
         return updated;
     }
