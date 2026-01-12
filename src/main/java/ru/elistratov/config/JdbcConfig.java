@@ -8,7 +8,7 @@ import org.springframework.data.jdbc.core.mapping.JdbcMappingContext;
 public class JdbcConfig {
 
     @Bean
-    public JdbcMappingContext JdbcMappingContext() {
+    public JdbcMappingContext jdbcMappingContext() {
         JdbcMappingContext jdbcMappingContext = new JdbcMappingContext();
         jdbcMappingContext.setSingleQueryLoadingEnabled(true);
         return jdbcMappingContext;

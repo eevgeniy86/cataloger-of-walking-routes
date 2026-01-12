@@ -18,8 +18,7 @@ public class ElevationsSupplier {
     private final DBServiceRoute dbService;
     private final RouteHandler routeHandler;
 
-    public ElevationsSupplier(
-            DBServiceRoute dbService, @Qualifier("osrm-elevations-handler") RouteHandler routeHandler) {
+    public ElevationsSupplier(DBServiceRoute dbService, @Qualifier("osrmElevationsHandler") RouteHandler routeHandler) {
         this.dbService = dbService;
         this.routeHandler = routeHandler;
     }

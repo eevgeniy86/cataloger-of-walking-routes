@@ -31,18 +31,18 @@ import ru.elistratov.model.domain.Waypoint;
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-public class RouteTest {
-    private static final String postgresVersion = "postgres:16";
-    private static final String postgresDbName = "demoDB";
-    private static final String postgresUser = "usr";
-    private static final String postgresPassword = "pwd";
+class RouteTest {
+    private static final String POSTGRES_VERSION = "postgres:16";
+    private static final String POSTGRES_DB_NAME = "demoDB";
+    private static final String POSTGRES_USER = "usr";
+    private static final String POSTGRES_PASSWORD = "pwd";
 
     // Creating DB container and connection properties, static-keyword - for one container for all class
     @Container
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(postgresVersion)
-            .withDatabaseName(postgresDbName)
-            .withUsername(postgresUser)
-            .withPassword(postgresPassword);
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(POSTGRES_VERSION)
+            .withDatabaseName(POSTGRES_DB_NAME)
+            .withUsername(POSTGRES_USER)
+            .withPassword(POSTGRES_PASSWORD);
 
     @Autowired
     private MockMvc mockMvc;
@@ -59,7 +59,7 @@ public class RouteTest {
 
     @Test
     @DisplayName("Route saved from url")
-    public void testSaveRouteFromUrl() throws Exception {
+    void testSaveRouteFromUrl() throws Exception {
         String url = "https://yandex.ru/maps?mode=routes&rtext=55.620324%2C37.696012~55.623574%2C37.705061&rtt=pd";
 
         MvcResult response = mockMvc.perform(
@@ -72,9 +72,9 @@ public class RouteTest {
 
     @Test
     @DisplayName("Route saved from JSON")
-    public void testSaveRouteFromJson() throws Exception {
-        Waypoint wp1 = new Waypoint(null, (short) 0, null, new Point(null, 55.620324, 37.696012));
-        Waypoint wp2 = new Waypoint(null, (short) 1, null, new Point(null, 55.623574, 37.705061));
+    void testSaveRouteFromJson() throws Exception {
+        Waypoint wp1 = new Waypoint(null, (short) 0, null, new Point(null, 55.620324f, 37.696012f), null);
+        Waypoint wp2 = new Waypoint(null, (short) 1, null, new Point(null, 55.623574f, 37.705061f), null);
         Route newRoute = new Route(
                 null,
                 null,
@@ -97,10 +97,10 @@ public class RouteTest {
 
     @Test
     @DisplayName("Got url for existing route")
-    public void testGetRouteUrl() throws Exception {
-        String expectedUrl = "https://yandex.ru/maps?mode=routes&rtext=55.620324,37.696012~55.623574,37.705061&rtt=pd";
-        Waypoint wp1 = new Waypoint(null, (short) 0, null, new Point(null, 55.620324, 37.696012));
-        Waypoint wp2 = new Waypoint(null, (short) 1, null, new Point(null, 55.623574, 37.705061));
+    void testGetRouteUrl() throws Exception {
+        String expectedUrl = "https://yandex.ru/maps?mode=routes&rtext=55.6203,37.696~55.6236,37.7051&rtt=pd";
+        Waypoint wp1 = new Waypoint(null, (short) 0, null, new Point(null, 55.620324f, 37.696012f), null);
+        Waypoint wp2 = new Waypoint(null, (short) 1, null, new Point(null, 55.623574f, 37.705061f), null);
         Route newRoute = new Route(
                 null,
                 null,

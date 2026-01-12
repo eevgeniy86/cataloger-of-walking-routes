@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.elistratov.model.domain.Point;
 
 @Component
-@Qualifier("points-to-osrm-elevations-coordinates-converter")
+@Qualifier("pointsToOsrmElevationsCoordinatesConverter")
 public class PointsToOSRMElevationsCoordinatesConverter implements PointsToCoordinatesConverter {
 
     // 37.696012,55.620324|37.705061,55.623574 - long,lat|long,lat

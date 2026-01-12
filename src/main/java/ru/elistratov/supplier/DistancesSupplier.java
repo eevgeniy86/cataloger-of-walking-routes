@@ -18,7 +18,7 @@ public class DistancesSupplier {
     private final DBServiceRoute dbService;
     private final RouteHandler routeHandler;
 
-    public DistancesSupplier(DBServiceRoute dbService, @Qualifier("osrm-distances-handler") RouteHandler routeHandler) {
+    public DistancesSupplier(DBServiceRoute dbService, @Qualifier("osrmDistancesHandler") RouteHandler routeHandler) {
         this.dbService = dbService;
         this.routeHandler = routeHandler;
     }

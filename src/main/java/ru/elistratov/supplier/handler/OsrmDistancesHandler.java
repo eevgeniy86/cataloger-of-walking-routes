@@ -17,7 +17,7 @@ import ru.elistratov.supplier.webrequest.RouteWebRequest;
 
 @Component
 @Slf4j
-@Qualifier("osrm-distances-handler")
+@Qualifier("osrmDistancesHandler")
 public class OsrmDistancesHandler implements RouteHandler {
     private final PointsToCoordinatesConverter converter;
     private final JsonToDistancesMapper jsonMapper;
@@ -25,7 +25,7 @@ public class OsrmDistancesHandler implements RouteHandler {
     private final DistancesSaver saver;
 
     public OsrmDistancesHandler(
-            @Qualifier("points-to-osrm-route-coordinates-converter") PointsToCoordinatesConverter converter,
+            @Qualifier("pointsToOsrmRouteCoordinatesConverter") PointsToCoordinatesConverter converter,
             JsonToDistancesMapper jsonMapper,
             RouteWebRequest request,
             DistancesSaver saver) {

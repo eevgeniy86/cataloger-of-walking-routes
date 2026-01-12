@@ -19,7 +19,7 @@ public class RelationsSupplier {
     private final DBServiceRoute dbService;
     private final RouteHandler routeHandler;
 
-    public RelationsSupplier(DBServiceRoute dbService, @Qualifier("osm-relations-handler") RouteHandler routeHandler) {
+    public RelationsSupplier(DBServiceRoute dbService, @Qualifier("osmRelationsHandler") RouteHandler routeHandler) {
         this.dbService = dbService;
         this.routeHandler = routeHandler;
     }

@@ -39,8 +39,6 @@ public class OsrmWebRequest implements RouteWebRequest, ElevationsWebRequest {
         this.elevationsUri = elevationsUri;
     }
 
-    // GET
-    // https://api.jawg.io/routing/route/v1/walk/37.696012,55.620324;37.705061,55.623574?access-token=***&overview=false}
     public Mono<String> getRoute(String coordinates) {
         String urlRequest =
                 String.format("%1$s%2$s/%3$s?access-token=%4$s&overview=false", url, routeUri, coordinates, token);

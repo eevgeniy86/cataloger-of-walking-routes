@@ -16,7 +16,7 @@ import ru.elistratov.supplier.webrequest.OsmWebRequest;
 @Component
 @Slf4j
 @AllArgsConstructor
-@Qualifier("osm-relations-handler")
+@Qualifier("osmRelationsHandler")
 public class OsmRelationsHandler implements RouteHandler {
     private final OsmWebRequest request;
     private final PointToCoordinatesConverter converter;

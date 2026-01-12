@@ -15,17 +15,17 @@ import ru.elistratov.supplier.webrequest.ElevationsWebRequest;
 
 @Component
 @Slf4j
-@Qualifier("osrm-elevations-handler")
+@Qualifier("osrmElevationsHandler")
 public class OsrmElevationsHandler implements RouteHandler {
-    private static final float metersBetweenPoints = 5.0f;
-    private static final int maxSamplesNumber = 1024;
+    private static final float METERS_BETWEEN_POINTS = 5.0f;
+    private static final int MAX_SAMPLES_NUMBER = 1024;
     private final PointsToCoordinatesConverter converter;
     private final JsonToElevationsMapper jsonMapper;
     private final ElevationsWebRequest request;
     private final ElevationsSaver saver;
 
     public OsrmElevationsHandler(
-            @Qualifier("points-to-osrm-elevations-coordinates-converter") PointsToCoordinatesConverter converter,
+            @Qualifier("pointsToOsrmElevationsCoordinatesConverter") PointsToCoordinatesConverter converter,
             JsonToElevationsMapper jsonMapper,
             ElevationsWebRequest request,
             ElevationsSaver saver) {
@@ -42,12 +42,12 @@ public class OsrmElevationsHandler implements RouteHandler {
                 .toList();
         Map<List<Waypoint>, Float> waypointSeries = getWaypointsSeries(waypoints);
         int seriesCount = waypointSeries.size();
-        for (List<Waypoint> series : waypointSeries.keySet()) {
-            List<Point> points = series.stream().map(Waypoint::point).toList();
+        for (Map.Entry<List<Waypoint>, Float> entry : waypointSeries.entrySet()) {
+            List<Point> points = entry.getKey().stream().map(Waypoint::point).toList();
             String coordinates = converter.convertPointsToCoordinates(points);
-            int samplesNumber = (int) Math.ceil(waypointSeries.get(series) / metersBetweenPoints) + 1;
-            short lastWaypointIndex = series.getLast().index();
-            samplesNumber = Math.min(samplesNumber, maxSamplesNumber);
+            int samplesNumber = (int) (Math.ceil(entry.getValue()) / METERS_BETWEEN_POINTS) + 1;
+            short lastWaypointIndex = entry.getKey().getLast().index();
+            samplesNumber = Math.min(samplesNumber, MAX_SAMPLES_NUMBER);
             request.getElevations(coordinates, samplesNumber)
                     .reduce("", (a, b) -> a + b)
                     .subscribe(s -> handleWebResponse(s, lastWaypointIndex, seriesCount, route));
@@ -57,7 +57,7 @@ public class OsrmElevationsHandler implements RouteHandler {
 
     private Map<List<Waypoint>, Float> getWaypointsSeries(List<Waypoint> waypoints) {
         Map<List<Waypoint>, Float> waypointSeries = new HashMap<>();
-        float maxLength = metersBetweenPoints * maxSamplesNumber;
+        float maxLength = METERS_BETWEEN_POINTS * MAX_SAMPLES_NUMBER;
         List<Waypoint> provisional = new LinkedList<>();
         float length = 0;
         for (Waypoint w : waypoints) {

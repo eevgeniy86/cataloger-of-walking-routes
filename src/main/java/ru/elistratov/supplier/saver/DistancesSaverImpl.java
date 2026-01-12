@@ -3,7 +3,6 @@ package ru.elistratov.supplier.saver;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,7 @@ public class DistancesSaverImpl implements DistancesSaver {
         List<Waypoint> waypoints = route.waypointsList().stream()
                 .sorted(Comparator.comparingInt(Waypoint::index))
                 .map(w -> new Waypoint(w.id(), w.index(), w.comment(), w.point(), distances.pollFirst()))
-                .collect(Collectors.toList());
+                .toList();
         int result = dbServiceWaypoint.updateWaypointsWithDistances(waypoints);
         if (result == waypoints.size()) {
             Route updated = dbServiceRoute.updateRouteWithLength(route.id(), totalLength);
